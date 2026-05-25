@@ -394,4 +394,3 @@ async function renderNews() {
     });
   }
 }
-
