@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Classifica — ASD Bagnolo Calcio a 5</title>
+  <meta name="description" content="Classifica Serie B Girone C 2025/2026 e risultati dell'ASD Bagnolo Calcio a 5.">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav class="nav">
+    <a href="index.html" class="logo">
+      <img src="logo.png" alt="ASD Bagnolo C5" class="logo-img">
+      <div class="logotext">Bagnolo C5 <small>ASD · REG. EMILIA</small></div>
+    </a>
+    <button class="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
+    <div class="navlinks">
+      <a href="index.html">Home</a>
+      <a href="news.html">News</a>
+      <a href="squadre.html">Squadre</a>
+      <a href="classifica.html">Classifica</a>
+      <a href="storia.html">Storia</a>
+      <a href="societa.html">Società</a>
+      <a href="iscrizione.html" style="color:var(--y);font-weight:bold;">Iscriviti</a>
+      <a href="contatti.html" class="cta">Contatti</a>
+    </div>
+  </nav>
+
+  <section style="background:var(--bg)">
+    <div style="max-width:1060px;margin:0 auto">
+      <div style="height:4px;background:var(--y);margin-bottom:40px;border-radius:2px"></div>
+      <div class="sl">Campionato 2025/2026</div>
+      <div class="st">Classifica & <span>Risultati</span></div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:8px" class="grid-2">
+
+        <!-- CLASSIFICA -->
+        <div style="background:var(--bg2);border:1px solid var(--bd);border-radius:6px;overflow:hidden">
+          <div style="padding:14px 18px;border-bottom:1px solid var(--bd);display:flex;justify-content:space-between;align-items:center">
+            <span style="font-family:var(--fd);font-weight:800;font-size:14px;letter-spacing:.08em;text-transform:uppercase;color:#fff">Serie B — Girone C</span>
+            <span style="font-size:11px;color:var(--y)">2025/26 · Finale</span>
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th style="text-align:left">#</th>
+                <th style="text-align:left">Squadra</th>
+                <th>G</th>
+                <th>V</th>
+                <th>N</th>
+                <th>S</th>
+                <th>Pt</th>
+              </tr>
+            </thead>
+            <tbody id="classifica-body"></tbody>
+          </table>
+        </div>
+
+        <!-- RISULTATI E CALENDARIO -->
+        <div style="display:flex;flex-direction:column;gap:16px">
+
+          <!-- Ultimi Risultati -->
+          <div style="background:var(--bg2);border:1px solid var(--bd);border-radius:6px;overflow:hidden">
+            <div style="padding:14px 18px;border-bottom:1px solid var(--bd)">
+              <span style="font-family:var(--fd);font-weight:800;font-size:14px;text-transform:uppercase;color:#fff">Ultimi Risultati</span>
+            </div>
+            <table>
+              <tbody id="ultimi-risultati-body">
+                <!-- JS genererà qui i risultati -->
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Statistiche Stagione -->
+          <div style="background:var(--bg2);border:1px solid var(--bd);border-radius:6px;overflow:hidden">
+            <div style="padding:14px 18px;border-bottom:1px solid var(--bd)">
+              <span style="font-family:var(--fd);font-weight:800;font-size:14px;text-transform:uppercase;color:#fff">Statistiche Stagione</span>
+            </div>
+            <div id="statistiche-stagione" style="padding:18px;display:grid;grid-template-columns:repeat(3,1fr);gap:14px;text-align:center">
+              <!-- JS genererà qui le statistiche -->
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- TUTTI I RISULTATI -->
+      <div style="margin-top:32px;background:var(--bg2);border:1px solid var(--bd);border-radius:6px;overflow:hidden">
+        <div style="padding:14px 18px;border-bottom:1px solid var(--bd)">
+          <span style="font-family:var(--fd);font-weight:800;font-size:14px;text-transform:uppercase;color:#fff">Tutti i risultati della stagione</span>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th style="text-align:left">G.</th>
+              <th style="text-align:left">Partita</th>
+              <th>Ris.</th>
+              <th>Esito</th>
+            </tr>
+          </thead>
+          <tbody id="tutti-risultati-body">
+            <!-- JS genererà qui i risultati -->
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div style="max-width:1060px;margin:0 auto;display:grid;grid-template-columns:2fr 1fr 1fr;gap:32px;margin-bottom:32px" class="grid-2">
+      <div>
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+          <img src="logo.png" alt="ASD Bagnolo C5" class="logo-img footer">
+          <div style="font-family:var(--fd);font-weight:800;font-size:14px;text-transform:uppercase;color:#fff;line-height:1.1">ASD Bagnolo Calcio a 5<div style="font-size:9px;font-weight:400;color:var(--y);letter-spacing:.2em">BAGNOLO IN PIANO · RE</div></div>
+        </div>
+      </div>
+      <div>
+        <div style="font-family:var(--fd);font-weight:800;font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:#fff;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--bd)">Navigazione</div>
+        <div style="display:flex;flex-direction:column;gap:7px">
+          <a href="news.html" style="font-size:12px;color:var(--gr)">News</a>
+          <a href="squadre.html" style="font-size:12px;color:var(--gr)">Le Squadre</a>
+          <a href="classifica.html" style="font-size:12px;color:var(--gr)">Classifiche</a>
+          <a href="societa.html" style="font-size:12px;color:var(--gr)">La Società</a>
+        </div>
+      </div>
+      <div>
+        <div style="font-family:var(--fd);font-weight:800;font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:#fff;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--bd)">Info Legali</div>
+        <div style="font-size:11px;color:var(--gr);line-height:1.9">P.IVA 02060590359<br>Matr. F.I.G.C. 630663<br>info@bagnolocalcioa5.com</div>
+      </div>
+    </div>
+    <div style="border-top:1px solid var(--bd);padding-top:20px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px">
+      <div style="font-size:11px;color:var(--gr)">ASD Bagnolo Calcio a 5 — Bagnolo in Piano (RE)</div>
+      <div style="font-size:11px;color:var(--gr)">© 2007–2026 ASD Bagnolo Calcio a 5</div>
+    </div>
+  </footer>
+
+  <script src="main.js"></script>
+</body>
+</html>
