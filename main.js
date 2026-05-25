@@ -352,33 +352,32 @@ async function renderNews() {
 
     let tagColor = 'var(--y)'; let tagText = 'var(--bk)';
     let badgeHtml = '';
-    if (esito === 'S') { tagColor = '#3a1a1a'; tagText = '#f87171'; cat = 'Sconfitta'; badgeHtml = `< div style = "display:flex;gap:6px;align-items:center;margin-top:14px" ><span class="badge-s">S</span><span style="font-size:11px;color:var(--gr)">${result}</span></div > `; }
-    else if (esito === 'N') { tagColor = '#2a2a1a'; tagText = '#facc15'; cat = 'Pareggio'; badgeHtml = `< div style = "display:flex;gap:6px;align-items:center;margin-top:14px" ><span class="badge-n">N</span><span style="font-size:11px;color:var(--gr)">${result}</span></div > `; }
-    else if (esito === 'V') { badgeHtml = `< div style = "display:flex;gap:6px;align-items:center;margin-top:14px" ><span class="badge-v">V</span><span style="font-size:11px;color:var(--gr)">${result}</span></div > `; }
+    if (esito === 'S') { tagColor = '#3a1a1a'; tagText = '#f87171'; cat = 'Sconfitta'; badgeHtml = '<div style="display:flex;gap:6px;align-items:center;margin-top:14px"><span class="badge-s">S</span><span style="font-size:11px;color:var(--gr)">' + result + '</span></div>'; }
+    else if (esito === 'N') { tagColor = '#2a2a1a'; tagText = '#facc15'; cat = 'Pareggio'; badgeHtml = '<div style="display:flex;gap:6px;align-items:center;margin-top:14px"><span class="badge-n">N</span><span style="font-size:11px;color:var(--gr)">' + result + '</span></div>'; }
+    else if (esito === 'V') { badgeHtml = '<div style="display:flex;gap:6px;align-items:center;margin-top:14px"><span class="badge-v">V</span><span style="font-size:11px;color:var(--gr)">' + result + '</span></div>'; }
 
     // Immagine di fallback per la card
     let cardImageStyle = fotoUrl 
-      ? `background - image: url('${fotoUrl}'); background - size: cover; background - position: center; border - radius: 6px 6px 0 0; border - bottom: 1px solid var(--bd); ` 
-      : `background: var(--bg3); `;
+      ? "background-image: url('" + fotoUrl + "'); background-size: cover; background-position: center; border-radius: 6px 6px 0 0; border-bottom: 1px solid var(--bd);" 
+      : "background: var(--bg3);";
     
     let iconHtml = fotoUrl 
       ? '' 
-      : `< div style = "width:50px;height:50px;border-radius:50%;background:rgba(245,197,0,.15);display:flex;align-items:center;justify-content:center" > <div style="width:22px;height:22px;border-radius:50%;background:rgba(245,197,0,.3)"></div></div > `;
+      : '<div style="width:50px;height:50px;border-radius:50%;background:rgba(245,197,0,.15);display:flex;align-items:center;justify-content:center"><div style="width:22px;height:22px;border-radius:50%;background:rgba(245,197,0,.3)"></div></div>';
 
-    return `
-    < div class="card" onclick = "openNewsModal(${index})" style = "text-decoration:none;display:block;cursor:pointer;" >
-          <div style="height:140px;${cardImageStyle}display:flex;align-items:center;justify-content:center;position:relative">
-            ${iconHtml}
-            <div style="position:absolute;top:10px;left:10px;background:${tagColor};color:${tagText};font-family:var(--fd);font-weight:800;font-size:9px;letter-spacing:.15em;text-transform:uppercase;padding:3px 8px;border-radius:2px">${cat}</div>
-          </div>
-          <div style="padding:18px">
-            <div style="font-size:11px;color:var(--gr);margin-bottom:7px">${info}</div>
-            <div style="font-family:var(--fd);font-weight:800;font-size:17px;line-height:1.2;text-transform:uppercase;color:#fff;margin-bottom:8px">${title}</div>
-            <div style="font-size:12px;color:var(--gr);line-height:1.6">${textPreview}</div>
-            ${result ? badgeHtml : `<div style="font-family:var(--fd);font-weight:700;font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--y);margin-top:14px">Leggi tutto →</div>`}
-          </div>
-        </div >
-    `;
+    return '' +
+      '<div class="card" onclick="openNewsModal(' + index + ')" style="text-decoration:none;display:block;cursor:pointer;">' +
+        '<div style="height:140px;' + cardImageStyle + 'display:flex;align-items:center;justify-content:center;position:relative">' +
+          iconHtml +
+          '<div style="position:absolute;top:10px;left:10px;background:' + tagColor + ';color:' + tagText + ';font-family:var(--fd);font-weight:800;font-size:9px;letter-spacing:.15em;text-transform:uppercase;padding:3px 8px;border-radius:2px">' + cat + '</div>' +
+        '</div>' +
+        '<div style="padding:18px">' +
+          '<div style="font-size:11px;color:var(--gr);margin-bottom:7px">' + info + '</div>' +
+          '<div style="font-family:var(--fd);font-weight:800;font-size:17px;line-height:1.2;text-transform:uppercase;color:#fff;margin-bottom:8px">' + title + '</div>' +
+          '<div style="font-size:12px;color:var(--gr);line-height:1.6">' + textPreview + '</div>' +
+          (result ? badgeHtml : '<div style="font-family:var(--fd);font-weight:700;font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--y);margin-top:14px">Leggi tutto &rarr;</div>') +
+        '</div>' +
+      '</div>';
   }
 
   if (homeContainer) {
