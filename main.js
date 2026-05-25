@@ -247,10 +247,12 @@ function openNewsModal(index) {
   let cat = r[0] || 'News';
   const info = r[1] || '';
   const title = r[2] || '';
-  const text = r[3] || '';
-  const result = r[4] || '';
-  const esito = r[5] || '';
-  const fotoUrl = r[6] || ''; // Nuova colonna per la foto
+  const riassunto = r[3] || '';
+  const testoCompleto = r[4] || riassunto; // Fallback al riassunto se non c'è articolo lungo
+  const result = r[5] || '';
+  const esito = r[6] || '';
+  const fotoUrl = r[7] || '';
+  const altreFotoStr = r[8] || '';
 
   let tagColor = 'var(--y)'; let tagText = 'var(--bk)';
   let badgeHtml = '';
@@ -261,6 +263,20 @@ function openNewsModal(index) {
   let imageHtml = '';
   if (fotoUrl) {
     imageHtml = `<img src="${fotoUrl}" alt="Immagine News" class="news-modal-image">`;
+  }
+
+  // Costruisci la griglia delle foto extra
+  let galleryHtml = '';
+  if (altreFotoStr.trim() !== '') {
+    const urls = altreFotoStr.split(',').map(url => url.trim()).filter(url => url !== '');
+    if (urls.length > 0) {
+      galleryHtml = `<div style="margin-top:24px;border-top:1px solid var(--bd);padding-top:24px">
+        <div style="font-family:var(--fd);font-weight:700;font-size:14px;text-transform:uppercase;color:var(--y);margin-bottom:12px;letter-spacing:0.1em">Galleria Foto</div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill, minmax(140px, 1fr));gap:10px">
+          ${urls.map(u => `<a href="${u}" target="_blank"><img src="${u}" style="width:100%;height:140px;object-fit:cover;border-radius:4px;border:1px solid var(--bd);transition:transform 0.2s" onmouseover="this.style.transform='scale(1.03)'" onmouseout="this.style.transform='scale(1)'"></a>`).join('')}
+        </div>
+      </div>`;
+    }
   }
 
   // Crea la modale se non esiste
@@ -282,11 +298,13 @@ function openNewsModal(index) {
       <div class="news-modal-body">
         <div style="font-size:11px;color:var(--y);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:8px">${info}</div>
         <div style="font-family:var(--fd);font-weight:900;font-size:24px;line-height:1.1;text-transform:uppercase;color:#fff;margin-bottom:16px">${title}</div>
-        <div style="font-size:14px;color:var(--grl);line-height:1.7;white-space:pre-wrap;">${text}</div>
+        <div style="font-size:14px;color:var(--grl);line-height:1.7;white-space:pre-wrap;">${testoCompleto}</div>
         ${result ? badgeHtml : ''}
+        ${galleryHtml}
       </div>
     </div>
-  `;
+  `;    </div >
+    `;
 
   // Previene lo scrolling della pagina sotto la modale
   document.body.style.overflow = 'hidden';
@@ -325,29 +343,30 @@ async function renderNews() {
     let cat = r[0] || 'News';
     const info = r[1] || '';
     const title = r[2] || '';
-    // Per la card mostriamo solo le prime parole del testo per non farla troppo lunga
-    const textPreview = r[3] ? (r[3].length > 100 ? r[3].substring(0, 100) + '...' : r[3]) : '';
-    const result = r[4] || '';
-    const esito = r[5] || '';
-    const fotoUrl = r[6] || '';
+    const riassunto = r[3] || '';
+    // Usa il riassunto per la card. Se non c'è, previene errori.
+    const textPreview = riassunto.length > 130 ? riassunto.substring(0, 130) + '...' : riassunto;
+    const result = r[5] || '';
+    const esito = r[6] || '';
+    const fotoUrl = r[7] || '';
 
     let tagColor = 'var(--y)'; let tagText = 'var(--bk)';
     let badgeHtml = '';
-    if (esito === 'S') { tagColor = '#3a1a1a'; tagText = '#f87171'; cat = 'Sconfitta'; badgeHtml = `<div style="display:flex;gap:6px;align-items:center;margin-top:14px"><span class="badge-s">S</span><span style="font-size:11px;color:var(--gr)">${result}</span></div>`; }
-    else if (esito === 'N') { tagColor = '#2a2a1a'; tagText = '#facc15'; cat = 'Pareggio'; badgeHtml = `<div style="display:flex;gap:6px;align-items:center;margin-top:14px"><span class="badge-n">N</span><span style="font-size:11px;color:var(--gr)">${result}</span></div>`; }
-    else if (esito === 'V') { badgeHtml = `<div style="display:flex;gap:6px;align-items:center;margin-top:14px"><span class="badge-v">V</span><span style="font-size:11px;color:var(--gr)">${result}</span></div>`; }
+    if (esito === 'S') { tagColor = '#3a1a1a'; tagText = '#f87171'; cat = 'Sconfitta'; badgeHtml = `< div style = "display:flex;gap:6px;align-items:center;margin-top:14px" ><span class="badge-s">S</span><span style="font-size:11px;color:var(--gr)">${result}</span></div > `; }
+    else if (esito === 'N') { tagColor = '#2a2a1a'; tagText = '#facc15'; cat = 'Pareggio'; badgeHtml = `< div style = "display:flex;gap:6px;align-items:center;margin-top:14px" ><span class="badge-n">N</span><span style="font-size:11px;color:var(--gr)">${result}</span></div > `; }
+    else if (esito === 'V') { badgeHtml = `< div style = "display:flex;gap:6px;align-items:center;margin-top:14px" ><span class="badge-v">V</span><span style="font-size:11px;color:var(--gr)">${result}</span></div > `; }
 
     // Immagine di fallback per la card
-    let cardImageStyle = fotoUrl
-      ? `background-image: url('${fotoUrl}'); background-size: cover; background-position: center; border-radius: 6px 6px 0 0; border-bottom: 1px solid var(--bd);`
-      : `background: var(--bg3);`;
-
-    let iconHtml = fotoUrl
-      ? ''
-      : `<div style="width:50px;height:50px;border-radius:50%;background:rgba(245,197,0,.15);display:flex;align-items:center;justify-content:center"><div style="width:22px;height:22px;border-radius:50%;background:rgba(245,197,0,.3)"></div></div>`;
+    let cardImageStyle = fotoUrl 
+      ? `background - image: url('${fotoUrl}'); background - size: cover; background - position: center; border - radius: 6px 6px 0 0; border - bottom: 1px solid var(--bd); ` 
+      : `background: var(--bg3); `;
+    
+    let iconHtml = fotoUrl 
+      ? '' 
+      : `< div style = "width:50px;height:50px;border-radius:50%;background:rgba(245,197,0,.15);display:flex;align-items:center;justify-content:center" > <div style="width:22px;height:22px;border-radius:50%;background:rgba(245,197,0,.3)"></div></div > `;
 
     return `
-        <div class="card" onclick="openNewsModal(${index})" style="text-decoration:none;display:block">
+    < div class="card" onclick = "openNewsModal(${index})" style = "text-decoration:none;display:block;cursor:pointer;" >
           <div style="height:140px;${cardImageStyle}display:flex;align-items:center;justify-content:center;position:relative">
             ${iconHtml}
             <div style="position:absolute;top:10px;left:10px;background:${tagColor};color:${tagText};font-family:var(--fd);font-weight:800;font-size:9px;letter-spacing:.15em;text-transform:uppercase;padding:3px 8px;border-radius:2px">${cat}</div>
@@ -358,7 +377,7 @@ async function renderNews() {
             <div style="font-size:12px;color:var(--gr);line-height:1.6">${textPreview}</div>
             ${result ? badgeHtml : `<div style="font-family:var(--fd);font-weight:700;font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--y);margin-top:14px">Leggi tutto →</div>`}
           </div>
-        </div>
+        </div >
     `;
   }
 
