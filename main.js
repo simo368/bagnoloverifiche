@@ -2,6 +2,10 @@
    ASD Bagnolo Calcio a 5 — Main JS
    =================================== */
 
+// --- CONFIGURAZIONE WEBHOOKS MAKE.COM ---
+// Sostituisci questo URL con il tuo webhook generato su Make.com per la sezione contatti
+const URL_WEBHOOK_CONTATTI = "https://hook.eu1.make.com/plb8bic7wyxpayf6qvwfachiewx33rf4";
+
 // --- CONFIGURAZIONE FOGLI GOOGLE ---
 // Incolla qui i link in formato TSV generati da Fogli Google (File > Condividi > Pubblica sul web > Formato: Valori separati da tabulazione (.tsv))
 const URL_CLASSIFICA = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRGt93SnbyMxCa8iiNGD1kSFmINdNsFT7uIVYvCuuqGj8IuZ4OyDcW5fqvRSGpyuAfV-2kE7WYMLMLP/pub?gid=0&single=true&output=tsv";
@@ -43,23 +47,64 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  /* ---- Contact Form (simulated) ---- */
+  /* ---- Contact Form (Make.com Automation) ---- */
   const form = document.getElementById('form-contatti');
   if (form) {
-    form.addEventListener('submit', (e) => {
+    form.addEventListener('submit', async (e) => {
       e.preventDefault();
+
       const btn = form.querySelector('button[type="submit"]');
-      const originalText = btn.innerText;
-      btn.innerText = 'Invio in corso...';
-      btn.style.opacity = '0.7';
+      const feedback = document.getElementById('contatti-feedback');
+
+      // Resetta feedback precedente
+      if (feedback) feedback.innerHTML = '';
+
+      // Imposta stato di loading premium
+      btn.classList.add('btn-loading');
       btn.disabled = true;
-      setTimeout(() => {
-        alert('Messaggio inviato con successo! Ti risponderemo il prima possibile.');
-        btn.innerText = originalText;
-        btn.style.opacity = '1';
+
+      // Raccoglie i dati del form
+      const data = {
+        nome: document.getElementById('contatti-nome').value.trim(),
+        email: document.getElementById('contatti-email').value.trim(),
+        oggetto: document.getElementById('contatti-oggetto').value,
+        messaggio: document.getElementById('contatti-messaggio').value.trim(),
+        timestamp: new Date().toISOString()
+      };
+
+      try {
+        const response = await fetch(URL_WEBHOOK_CONTATTI, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(data)
+        });
+
+        if (response.ok) {
+          // Successo
+          alert('Messaggio inviato con successo! Ti risponderemo il prima possibile.');
+          form.reset();
+        } else {
+          throw new Error('Server returned status: ' + response.status);
+        }
+      } catch (error) {
+        console.error('Errore durante l\'invio del modulo contatti:', error);
+        if (feedback) {
+          feedback.innerHTML = `
+            <div class="error-message">
+              <span>⚠️</span>
+              <span>Si è verificato un errore durante l'invio. Riprova più tardi o contatta direttamente <strong>info@bagnolocalcioa5.com</strong>.</span>
+            </div>
+          `;
+        } else {
+          alert('Si è verificato un errore durante l\'invio. Ti invitiamo a riprovare più tardi o a scriverci a info@bagnolocalcioa5.com');
+        }
+      } finally {
+        // Ripristina stato del pulsante
+        btn.classList.remove('btn-loading');
         btn.disabled = false;
-        form.reset();
-      }, 1000);
+      }
     });
   }
 

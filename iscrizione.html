@@ -1,85 +1,459 @@
 <!DOCTYPE html>
 <html lang="it">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Modulo di Iscrizione — ASD Bagnolo Calcio a 5</title>
   <meta name="description" content="Modulo di iscrizione online per l'ASD Bagnolo Calcio a 5.">
-  
+
   <!-- Includo il foglio di stile globale del sito per la Nav e il Footer -->
   <link rel="stylesheet" href="style.css">
-  
+
   <!-- Stili specifici del modulo forniti da te -->
   <style>
     /* Ho rimosso il reset globale * { margin: 0; padding: 0 } per non rompere la navbar esistente, 
        ma mantengo lo stile specifico per il modulo */
-    .wrap { background: #0a0a0a; min-height: 100vh; font-family: var(--fd, 'Inter', sans-serif); color: #fff; padding: 0 0 3rem; }
-    .modulo-header { background: #000; border-bottom: 3px solid #F5C800; padding: 1.5rem; text-align: center; }
-    .modulo-header img { height: 64px; margin-bottom: 0.75rem; display: block; margin-left: auto; margin-right: auto; }
-    .modulo-header h1 { font-size: 22px; font-weight: 700; color: #F5C800; letter-spacing: 2px; text-transform: uppercase; font-family: var(--fd, sans-serif); }
-    .modulo-header p { font-size: 13px; color: #888; margin-top: 4px; letter-spacing: 1px; text-transform: uppercase; }
-    
-    .form-wrap { max-width: 680px; margin: 0 auto; padding: 2rem 1.25rem 0; box-sizing: border-box; }
-    .step-bar { display: flex; gap: 0; margin-bottom: 2rem; border-radius: 8px; overflow: hidden; border: 1px solid #222; }
-    .step { flex: 1; padding: 0.6rem 0.5rem; text-align: center; font-size: 11px; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; color: #555; background: #111; cursor: pointer; transition: all 0.2s; border-right: 1px solid #222; }
-    .step:last-child { border-right: none; }
-    .step.active { background: #F5C800; color: #000; }
-    .step.done { background: #1a1600; color: #F5C800; }
-    .section { display: none; }
-    .section.visible { display: block; }
-    .section-title { display: flex; align-items: center; gap: 10px; margin-bottom: 1.25rem; padding-bottom: 0.75rem; border-bottom: 1px solid #1e1e1e; }
-    .section-title i { color: #F5C800; font-size: 20px; }
-    .section-title span { font-size: 15px; font-weight: 600; color: #F5C800; text-transform: uppercase; letter-spacing: 1px; }
-    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
-    .form-row.full { grid-template-columns: 1fr; }
-    .form-row.three { grid-template-columns: 1fr 1fr 1fr; }
-    .field { display: flex; flex-direction: column; gap: 5px; }
-    .form-wrap label { font-size: 12px; font-weight: 600; color: #888; text-transform: uppercase; letter-spacing: 0.5px; }
-    .form-wrap label .req { color: #F5C800; margin-left: 2px; }
-    .form-wrap input, .form-wrap select, .form-wrap textarea { background: #111; border: 1px solid #2a2a2a; border-radius: 6px; color: #fff; font-size: 14px; padding: 10px 12px; width: 100%; outline: none; transition: border-color 0.2s; font-family: inherit; box-sizing: border-box; }
-    .form-wrap input:focus, .form-wrap select:focus, .form-wrap textarea:focus { border-color: #F5C800; }
-    .form-wrap input.error, .form-wrap select.error, .form-wrap textarea.error { border-color: #e24b4a; }
-    .form-wrap input.ok { border-color: #3B6D11; }
-    .form-wrap select option { background: #111; }
-    .form-wrap textarea { resize: vertical; min-height: 80px; }
-    .hint { font-size: 11px; color: #555; margin-top: 2px; }
-    .hint.yellow { color: #F5C800; }
-    .cf-box { background: #111; border: 1px solid #2a2a2a; border-radius: 6px; padding: 1rem; margin-bottom: 1rem; }
-    .cf-result { font-size: 18px; font-weight: 700; color: #F5C800; letter-spacing: 3px; font-family: monospace; margin-top: 0.5rem; min-height: 28px; }
-    .cf-status { font-size: 12px; color: #555; margin-top: 4px; }
-    .cf-status.ok { color: #639922; }
-    .checkbox-group { display: flex; flex-direction: column; gap: 10px; margin-bottom: 1rem; }
-    .check-row { display: flex; align-items: flex-start; gap: 10px; }
-    .check-row input[type="checkbox"] { width: 18px; height: 18px; min-width: 18px; accent-color: #F5C800; margin-top: 1px; cursor: pointer; }
-    .check-label { font-size: 13px; color: #ccc; line-height: 1.4; cursor: pointer; }
-    .check-label a { color: #F5C800; text-decoration: none; }
-    .form-nav { display: flex; gap: 1rem; margin-top: 2rem; }
-    .form-btn { flex: 1; padding: 14px; border-radius: 8px; font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; border: none; transition: all 0.2s; font-family: inherit; }
-    .btn-back { background: #111; color: #888; border: 1px solid #2a2a2a; }
-    .btn-back:hover { border-color: #555; color: #ccc; }
-    .btn-next { background: #F5C800; color: #000; }
-    .btn-next:hover { background: #ffd700; }
-    .btn-submit { background: #F5C800; color: #000; }
-    .btn-submit:hover { background: #ffd700; }
-    .progress { height: 3px; background: #1a1a1a; margin-bottom: 2rem; border-radius: 2px; }
-    .progress-fill { height: 100%; background: #F5C800; border-radius: 2px; transition: width 0.3s; }
-    .success-screen { display: none; text-align: center; padding: 3rem 1rem; }
-    .success-screen.visible { display: block; }
-    .success-icon { width: 72px; height: 72px; background: #1a1600; border: 2px solid #F5C800; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem; }
-    .success-icon i { color: #F5C800; font-size: 32px; font-style: normal; }
-    .success-screen h2 { color: #F5C800; font-size: 22px; margin-bottom: 0.5rem; }
-    .success-screen p { color: #888; font-size: 14px; line-height: 1.6; }
-    .tag { display: inline-block; font-size: 10px; font-weight: 700; background: #1a1600; color: #F5C800; border: 1px solid #F5C800; border-radius: 4px; padding: 2px 7px; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.75rem; }
-    .file-input-wrapper { background: #111; border: 1px dashed #333; border-radius: 6px; padding: 1rem; text-align: center; margin-top: 0.5rem; transition: border-color 0.2s; }
-    .file-input-wrapper:hover { border-color: #555; }
-    .file-input-wrapper input[type="file"] { display: none; }
-    .file-input-wrapper label { cursor: pointer; color: #F5C800; font-size: 13px; font-weight: 600; text-transform: none; display: inline-block; padding: 8px 16px; border: 1px solid #F5C800; border-radius: 4px; transition: all 0.2s; letter-spacing: 0.5px; }
-    .file-input-wrapper label:hover { background: #F5C800; color: #000; }
-    .file-name { margin-top: 8px; font-size: 12px; color: #aaa; word-break: break-all; min-height: 15px; }
-    .file-input-wrapper.error { border-color: #e24b4a; }
-    @media (max-width: 500px) { .form-row { grid-template-columns: 1fr; } .form-row.three { grid-template-columns: 1fr 1fr; } }
+    .wrap {
+      background: #0a0a0a;
+      min-height: 100vh;
+      font-family: var(--fd, 'Inter', sans-serif);
+      color: #fff;
+      padding: 0 0 3rem;
+    }
+
+    .modulo-header {
+      background: #000;
+      border-bottom: 3px solid #F5C800;
+      padding: 1.5rem;
+      text-align: center;
+    }
+
+    .modulo-header img {
+      height: 64px;
+      margin-bottom: 0.75rem;
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .modulo-header h1 {
+      font-size: 22px;
+      font-weight: 700;
+      color: #F5C800;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      font-family: var(--fd, sans-serif);
+    }
+
+    .modulo-header p {
+      font-size: 13px;
+      color: #888;
+      margin-top: 4px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .form-wrap {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 2rem 1.25rem 0;
+      box-sizing: border-box;
+    }
+
+    .step-bar {
+      display: flex;
+      gap: 0;
+      margin-bottom: 2rem;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid #222;
+    }
+
+    .step {
+      flex: 1;
+      padding: 0.6rem 0.5rem;
+      text-align: center;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      color: #555;
+      background: #111;
+      cursor: pointer;
+      transition: all 0.2s;
+      border-right: 1px solid #222;
+    }
+
+    .step:last-child {
+      border-right: none;
+    }
+
+    .step.active {
+      background: #F5C800;
+      color: #000;
+    }
+
+    .step.done {
+      background: #1a1600;
+      color: #F5C800;
+    }
+
+    .section {
+      display: none;
+    }
+
+    .section.visible {
+      display: block;
+    }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 1.25rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid #1e1e1e;
+    }
+
+    .section-title i {
+      color: #F5C800;
+      font-size: 20px;
+    }
+
+    .section-title span {
+      font-size: 15px;
+      font-weight: 600;
+      color: #F5C800;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .form-row.full {
+      grid-template-columns: 1fr;
+    }
+
+    .form-row.three {
+      grid-template-columns: 1fr 1fr 1fr;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .form-wrap label {
+      font-size: 12px;
+      font-weight: 600;
+      color: #888;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .form-wrap label .req {
+      color: #F5C800;
+      margin-left: 2px;
+    }
+
+    .form-wrap input,
+    .form-wrap select,
+    .form-wrap textarea {
+      background: #111;
+      border: 1px solid #2a2a2a;
+      border-radius: 6px;
+      color: #fff;
+      font-size: 14px;
+      padding: 10px 12px;
+      width: 100%;
+      outline: none;
+      transition: border-color 0.2s;
+      font-family: inherit;
+      box-sizing: border-box;
+    }
+
+    .form-wrap input:focus,
+    .form-wrap select:focus,
+    .form-wrap textarea:focus {
+      border-color: #F5C800;
+    }
+
+    .form-wrap input.error,
+    .form-wrap select.error,
+    .form-wrap textarea.error {
+      border-color: #e24b4a;
+    }
+
+    .form-wrap input.ok {
+      border-color: #3B6D11;
+    }
+
+    .form-wrap select option {
+      background: #111;
+    }
+
+    .form-wrap textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    .hint {
+      font-size: 11px;
+      color: #555;
+      margin-top: 2px;
+    }
+
+    .hint.yellow {
+      color: #F5C800;
+    }
+
+    .cf-box {
+      background: #111;
+      border: 1px solid #2a2a2a;
+      border-radius: 6px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .cf-result {
+      font-size: 18px;
+      font-weight: 700;
+      color: #F5C800;
+      letter-spacing: 3px;
+      font-family: monospace;
+      margin-top: 0.5rem;
+      min-height: 28px;
+    }
+
+    .cf-status {
+      font-size: 12px;
+      color: #555;
+      margin-top: 4px;
+    }
+
+    .cf-status.ok {
+      color: #639922;
+    }
+
+    .checkbox-group {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 1rem;
+    }
+
+    .check-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+    }
+
+    .check-row input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      min-width: 18px;
+      accent-color: #F5C800;
+      margin-top: 1px;
+      cursor: pointer;
+    }
+
+    .check-label {
+      font-size: 13px;
+      color: #ccc;
+      line-height: 1.4;
+      cursor: pointer;
+    }
+
+    .check-label a {
+      color: #F5C800;
+      text-decoration: none;
+    }
+
+    .form-nav {
+      display: flex;
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+
+    .form-btn {
+      flex: 1;
+      padding: 14px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s;
+      font-family: inherit;
+    }
+
+    .btn-back {
+      background: #111;
+      color: #888;
+      border: 1px solid #2a2a2a;
+    }
+
+    .btn-back:hover {
+      border-color: #555;
+      color: #ccc;
+    }
+
+    .btn-next {
+      background: #F5C800;
+      color: #000;
+    }
+
+    .btn-next:hover {
+      background: #ffd700;
+    }
+
+    .btn-submit {
+      background: #F5C800;
+      color: #000;
+    }
+
+    .btn-submit:hover {
+      background: #ffd700;
+    }
+
+    .progress {
+      height: 3px;
+      background: #1a1a1a;
+      margin-bottom: 2rem;
+      border-radius: 2px;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: #F5C800;
+      border-radius: 2px;
+      transition: width 0.3s;
+    }
+
+    .success-screen {
+      display: none;
+      text-align: center;
+      padding: 3rem 1rem;
+    }
+
+    .success-screen.visible {
+      display: block;
+    }
+
+    .success-icon {
+      width: 72px;
+      height: 72px;
+      background: #1a1600;
+      border: 2px solid #F5C800;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1.5rem;
+    }
+
+    .success-icon i {
+      color: #F5C800;
+      font-size: 32px;
+      font-style: normal;
+    }
+
+    .success-screen h2 {
+      color: #F5C800;
+      font-size: 22px;
+      margin-bottom: 0.5rem;
+    }
+
+    .success-screen p {
+      color: #888;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .tag {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 700;
+      background: #1a1600;
+      color: #F5C800;
+      border: 1px solid #F5C800;
+      border-radius: 4px;
+      padding: 2px 7px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 0.75rem;
+    }
+
+    .file-input-wrapper {
+      background: #111;
+      border: 1px dashed #333;
+      border-radius: 6px;
+      padding: 1rem;
+      text-align: center;
+      margin-top: 0.5rem;
+      transition: border-color 0.2s;
+    }
+
+    .file-input-wrapper:hover {
+      border-color: #555;
+    }
+
+    .file-input-wrapper input[type="file"] {
+      display: none;
+    }
+
+    .file-input-wrapper label {
+      cursor: pointer;
+      color: #F5C800;
+      font-size: 13px;
+      font-weight: 600;
+      text-transform: none;
+      display: inline-block;
+      padding: 8px 16px;
+      border: 1px solid #F5C800;
+      border-radius: 4px;
+      transition: all 0.2s;
+      letter-spacing: 0.5px;
+    }
+
+    .file-input-wrapper label:hover {
+      background: #F5C800;
+      color: #000;
+    }
+
+    .file-name {
+      margin-top: 8px;
+      font-size: 12px;
+      color: #aaa;
+      word-break: break-all;
+      min-height: 15px;
+    }
+
+    .file-input-wrapper.error {
+      border-color: #e24b4a;
+    }
+
+    @media (max-width: 500px) {
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+
+      .form-row.three {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
   </style>
 </head>
+
 <body>
 
   <!-- NAVBAR GLOBALE DEL SITO -->
@@ -105,7 +479,7 @@
 
   <!-- CONTENUTO DEL MODULO DI ISCRIZIONE -->
   <div class="wrap" style="padding-top: 80px;"> <!-- padding-top per evitare sovrapposizione con la navbar -->
-    
+
     <div class="modulo-header">
       <img src="logo.png" alt="ASD Bagnolo Calcio a 5" onerror="this.style.display='none'">
       <h1>ASD Bagnolo Calcio a 5</h1>
@@ -119,43 +493,59 @@
         <div class="step" data-step="2">3. Sportivo</div>
         <div class="step" data-step="3">4. Consensi</div>
       </div>
-      <div class="progress"><div class="progress-fill" id="progressFill" style="width:25%"></div></div>
+      <div class="progress">
+        <div class="progress-fill" id="progressFill" style="width:25%"></div>
+      </div>
 
       <!-- STEP 1: ATLETA -->
       <div class="section visible" id="s0">
-        <div class="section-title"><i aria-hidden="true" style="font-style:normal">👤</i><span>Dati dell'Atleta</span></div>
-        <div class="form-row">
-          <div class="field"><label>Nome <span class="req">*</span></label><input type="text" id="nome" placeholder="Es. Marco"></div>
-          <div class="field"><label>Cognome <span class="req">*</span></label><input type="text" id="cognome" placeholder="Es. Rossi"></div>
+        <div class="section-title"><i aria-hidden="true" style="font-style:normal">👤</i><span>Dati dell'Atleta</span>
         </div>
         <div class="form-row">
-          <div class="field"><label>Data di nascita <span class="req">*</span></label><input type="date" id="dataNascita"></div>
+          <div class="field"><label>Nome <span class="req">*</span></label><input type="text" id="nome"
+              placeholder="Es. Marco"></div>
+          <div class="field"><label>Cognome <span class="req">*</span></label><input type="text" id="cognome"
+              placeholder="Es. Rossi"></div>
+        </div>
+        <div class="form-row">
+          <div class="field"><label>Data di nascita <span class="req">*</span></label><input type="date"
+              id="dataNascita"></div>
           <div class="field"><label>Sesso <span class="req">*</span></label>
-            <select id="sesso"><option value="">Seleziona</option><option value="M">Maschio</option><option value="F">Femmina</option></select>
+            <select id="sesso">
+              <option value="">Seleziona</option>
+              <option value="M">Maschio</option>
+              <option value="F">Femmina</option>
+            </select>
           </div>
         </div>
         <div class="form-row">
-          <div class="field"><label>Comune di nascita <span class="req">*</span></label><input type="text" id="comuneNascita" list="comuniList" placeholder="Es. Reggio Emilia" autocomplete="off"></div>
-          <div class="field"><label>Provincia <span class="req">*</span></label><input type="text" id="provinciaNascita" maxlength="2" placeholder="Es. RE" style="text-transform:uppercase"></div>
+          <div class="field"><label>Comune di nascita <span class="req">*</span></label><input type="text"
+              id="comuneNascita" list="comuniList" placeholder="Es. Reggio Emilia" autocomplete="off"></div>
+          <div class="field"><label>Provincia <span class="req">*</span></label><input type="text" id="provinciaNascita"
+              maxlength="2" placeholder="Es. RE" style="text-transform:uppercase"></div>
         </div>
 
         <div class="cf-box">
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
             <i style="color:#F5C800;font-size:18px;font-style:normal" aria-hidden="true">🪪</i>
-            <span style="font-size:12px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:.5px;">Codice Fiscale calcolato automaticamente</span>
+            <span style="font-size:12px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:.5px;">Codice
+              Fiscale calcolato automaticamente</span>
           </div>
           <div class="cf-result" id="cfResult">—</div>
           <div class="cf-status" id="cfStatus">Compila nome, cognome, nascita e comune per calcolare il CF</div>
           <div style="margin-top:10px;">
             <label style="margin-bottom:4px;display:block;">CF già in possesso? Inseriscilo qui per confronto</label>
-            <input type="text" id="cfManuale" maxlength="16" placeholder="Lascia vuoto per usare quello calcolato" style="text-transform:uppercase;font-family:monospace;letter-spacing:2px;">
+            <input type="text" id="cfManuale" maxlength="16" placeholder="Lascia vuoto per usare quello calcolato"
+              style="text-transform:uppercase;font-family:monospace;letter-spacing:2px;">
             <div class="hint" id="cfConfronto"></div>
           </div>
         </div>
 
         <div class="form-row">
-          <div class="field"><label>Comune di residenza</label><input type="text" id="comuneRes" list="comuniList" placeholder="Es. Bagnolo in Piano" autocomplete="off"></div>
-          <div class="field"><label>Indirizzo</label><input type="text" id="indirizzo" placeholder="Via e numero civico"></div>
+          <div class="field"><label>Comune di residenza</label><input type="text" id="comuneRes" list="comuniList"
+              placeholder="Es. Bagnolo in Piano" autocomplete="off"></div>
+          <div class="field"><label>Indirizzo</label><input type="text" id="indirizzo"
+              placeholder="Via e numero civico"></div>
         </div>
 
         <div class="form-row full">
@@ -163,33 +553,47 @@
             <label>Documento d'identità Atleta (Fronte/Retro) <span class="req">*</span></label>
             <div class="file-input-wrapper" id="wrapDocAtleta">
               <label for="docAtleta">Seleziona file (PDF, JPG, PNG)</label>
-              <input type="file" id="docAtleta" accept=".pdf,image/png,image/jpeg" onchange="showFileName(this, 'nameDocAtleta', 'wrapDocAtleta')">
+              <input type="file" id="docAtleta" accept=".pdf,image/png,image/jpeg"
+                onchange="showFileName(this, 'nameDocAtleta', 'wrapDocAtleta')">
               <div class="file-name" id="nameDocAtleta">Nessun file selezionato</div>
             </div>
           </div>
         </div>
 
-        <div class="form-nav"><div></div><button class="form-btn btn-next" onclick="nextStep(0)">Avanti ➔</button></div>
+        <div class="form-nav">
+          <div></div><button class="form-btn btn-next" onclick="nextStep(0)">Avanti ➔</button>
+        </div>
       </div>
 
       <!-- STEP 2: GENITORE -->
       <div class="section" id="s1">
-        <div class="section-title"><i aria-hidden="true" style="font-style:normal">👥</i><span>Dati Genitore / Tutore</span></div>
+        <div class="section-title"><i aria-hidden="true" style="font-style:normal">👥</i><span>Dati Genitore /
+            Tutore</span></div>
         <div class="form-row">
-          <div class="field"><label>Nome <span class="req">*</span></label><input type="text" id="gNome" placeholder="Es. Giuseppe"></div>
-          <div class="field"><label>Cognome <span class="req">*</span></label><input type="text" id="gCognome" placeholder="Es. Rossi"></div>
+          <div class="field"><label>Nome <span class="req">*</span></label><input type="text" id="gNome"
+              placeholder="Es. Giuseppe"></div>
+          <div class="field"><label>Cognome <span class="req">*</span></label><input type="text" id="gCognome"
+              placeholder="Es. Rossi"></div>
         </div>
         <div class="form-row">
           <div class="field"><label>Relazione <span class="req">*</span></label>
-            <select id="gRelazione"><option value="">Seleziona</option><option>Padre</option><option>Madre</option><option>Tutore legale</option></select>
+            <select id="gRelazione">
+              <option value="">Seleziona</option>
+              <option>Padre</option>
+              <option>Madre</option>
+              <option>Tutore legale</option>
+            </select>
           </div>
-          <div class="field"><label>Telefono <span class="req">*</span></label><input type="tel" id="gTelefono" placeholder="Es. 333 1234567"></div>
+          <div class="field"><label>Telefono <span class="req">*</span></label><input type="tel" id="gTelefono"
+              placeholder="Es. 333 1234567"></div>
         </div>
         <div class="form-row full">
-          <div class="field"><label>Email <span class="req">*</span></label><input type="email" id="gEmail" placeholder="Es. mario.rossi@email.it"></div>
+          <div class="field"><label>Email <span class="req">*</span></label><input type="email" id="gEmail"
+              placeholder="Es. mario.rossi@email.it"></div>
         </div>
         <div class="form-row full">
-          <div class="field"><label>Secondo genitore / Contatto di emergenza</label><input type="text" id="gEmergenza" placeholder="Nome e telefono"></div>
+          <div class="field"><label>Secondo genitore / Contatto di emergenza</label><input type="text" id="gEmergenza"
+              placeholder="Nome e telefono"></div>
         </div>
 
         <div class="form-row full">
@@ -197,7 +601,8 @@
             <label>Documento d'identità Genitore / Tutore <span class="req">*</span></label>
             <div class="file-input-wrapper" id="wrapDocGenitore">
               <label for="docGenitore">Seleziona file (PDF, JPG, PNG)</label>
-              <input type="file" id="docGenitore" accept=".pdf,image/png,image/jpeg" onchange="showFileName(this, 'nameDocGenitore', 'wrapDocGenitore')">
+              <input type="file" id="docGenitore" accept=".pdf,image/png,image/jpeg"
+                onchange="showFileName(this, 'nameDocGenitore', 'wrapDocGenitore')">
               <div class="file-name" id="nameDocGenitore">Nessun file selezionato</div>
             </div>
           </div>
@@ -211,31 +616,58 @@
 
       <!-- STEP 3: SPORTIVO -->
       <div class="section" id="s2">
-        <div class="section-title"><i aria-hidden="true" style="font-style:normal">⚽</i><span>Informazioni Sportive</span></div>
+        <div class="section-title"><i aria-hidden="true" style="font-style:normal">⚽</i><span>Informazioni
+            Sportive</span></div>
         <div class="form-row full">
           <div class="field"><label>Categoria di interesse <span class="req">*</span></label>
-            <select id="categoria"><option value="">Seleziona categoria</option><option>Baby (2018-2020)</option><option>Giovanissimi (2015-2017)</option><option>Allievi (2012-2014)</option><option>Under 19 (2007-2011)</option><option>Prima Squadra Maschile</option><option>Squadra Femminile</option></select>
+            <select id="categoria">
+              <option value="">Seleziona categoria</option>
+              <option>Baby (2018-2020)</option>
+              <option>Giovanissimi (2015-2017)</option>
+              <option>Allievi (2012-2014)</option>
+              <option>Under 19 (2007-2011)</option>
+              <option>Prima Squadra Maschile</option>
+              <option>Squadra Femminile</option>
+            </select>
           </div>
         </div>
         <div class="form-row">
           <div class="field"><label>Ha già giocato a calcio a 5?</label>
-            <select id="esperienza" onchange="toggleEsperienza()"><option value="">Seleziona</option><option value="no">No, prima volta</option><option value="si">Sì</option></select>
+            <select id="esperienza" onchange="toggleEsperienza()">
+              <option value="">Seleziona</option>
+              <option value="no">No, prima volta</option>
+              <option value="si">Sì</option>
+            </select>
           </div>
-          <div class="field" id="anniField" style="display:none"><label>Anni di esperienza</label><input type="number" id="anni" min="1" max="20" placeholder="Es. 3"></div>
+          <div class="field" id="anniField" style="display:none"><label>Anni di esperienza</label><input type="number"
+              id="anni" min="1" max="20" placeholder="Es. 3"></div>
         </div>
         <div class="form-row full" id="societa-field" style="display:none">
-          <div class="field"><label>Società precedente</label><input type="text" id="societaPrec" placeholder="Nome della società precedente"></div>
+          <div class="field"><label>Società precedente</label><input type="text" id="societaPrec"
+              placeholder="Nome della società precedente"></div>
         </div>
         <div class="form-row">
           <div class="field"><label>Ruolo preferito</label>
-            <select id="ruolo"><option value="">Nessuna preferenza</option><option>Portiere</option><option>Pivot</option><option>Ala</option><option>Universale</option></select>
+            <select id="ruolo">
+              <option value="">Nessuna preferenza</option>
+              <option>Portiere</option>
+              <option>Pivot</option>
+              <option>Ala</option>
+              <option>Universale</option>
+            </select>
           </div>
           <div class="field"><label>Piede dominante</label>
-            <select id="piede"><option value="">Seleziona</option><option>Destro</option><option>Sinistro</option><option>Ambidestro</option></select>
+            <select id="piede">
+              <option value="">Seleziona</option>
+              <option>Destro</option>
+              <option>Sinistro</option>
+              <option>Ambidestro</option>
+            </select>
           </div>
         </div>
         <div class="form-row full">
-          <div class="field"><label>Patologie / allergie / note mediche</label><textarea id="mediche" placeholder="Lascia vuoto se non presenti"></textarea></div>
+          <div class="field"><label>Patologie / allergie / note mediche</label><textarea id="mediche"
+              placeholder="Lascia vuoto se non presenti"></textarea></div>
         </div>
         <div class="form-nav">
           <button class="form-btn btn-back" onclick="prevStep(2)">⬅ Indietro</button>
@@ -245,38 +677,50 @@
 
       <!-- STEP 4: CONSENSI -->
       <div class="section" id="s3">
-        <div class="section-title"><i aria-hidden="true" style="font-style:normal">🛡️</i><span>Privacy & Consensi</span></div>
+        <div class="section-title"><i aria-hidden="true" style="font-style:normal">🛡️</i><span>Privacy &
+            Consensi</span></div>
         <div class="checkbox-group">
           <div class="check-row">
             <input type="checkbox" id="c1">
-            <label class="check-label" for="c1"><strong>Consenso trattamento dati personali</strong> ai sensi del D.Lgs. 196/2003 e del GDPR 679/2016. I dati saranno trattati esclusivamente per finalità sportive e amministrative da ASD Bagnolo Calcio a 5. <span class="req">*</span></label>
+            <label class="check-label" for="c1"><strong>Consenso trattamento dati personali</strong> ai sensi del D.Lgs.
+              196/2003 e del GDPR 679/2016. I dati saranno trattati esclusivamente per finalità sportive e
+              amministrative da ASD Bagnolo Calcio a 5. <span class="req">*</span></label>
           </div>
           <div class="check-row">
             <input type="checkbox" id="c2">
-            <label class="check-label" for="c2"><strong>Consenso pubblicazione immagini</strong> — Autorizzo ASD Bagnolo Calcio a 5 a pubblicare foto e video dell'atleta sui canali social e sul sito ufficiale.</label>
+            <label class="check-label" for="c2"><strong>Consenso pubblicazione immagini</strong> — Autorizzo ASD Bagnolo
+              Calcio a 5 a pubblicare foto e video dell'atleta sui canali social e sul sito ufficiale.</label>
           </div>
           <div class="check-row">
             <input type="checkbox" id="c3">
-            <label class="check-label" for="c3"><strong>Consenso comunicazioni</strong> — Acconsento a ricevere comunicazioni relative ad attività, eventi e notizie del club.</label>
+            <label class="check-label" for="c3"><strong>Consenso comunicazioni</strong> — Acconsento a ricevere
+              comunicazioni relative ad attività, eventi e notizie del club.</label>
           </div>
           <div class="check-row">
             <input type="checkbox" id="c4">
-            <label class="check-label" for="c4">Dichiaro di aver preso visione del regolamento interno del club e di accettarne i termini. <span class="req">*</span></label>
+            <label class="check-label" for="c4">Dichiaro di aver preso visione del regolamento interno del club e di
+              accettarne i termini. <span class="req">*</span></label>
           </div>
         </div>
 
         <div style="background:#111;border:1px solid #2a2a2a;border-radius:8px;padding:1rem;margin-bottom:1rem;">
-          <div style="font-size:12px;font-weight:600;color:#F5C800;text-transform:uppercase;letter-spacing:.5px;margin-bottom:0.5rem;">Riepilogo iscrizione</div>
+          <div
+            style="font-size:12px;font-weight:600;color:#F5C800;text-transform:uppercase;letter-spacing:.5px;margin-bottom:0.5rem;">
+            Riepilogo iscrizione</div>
           <div id="riepilogo" style="font-size:13px;color:#888;line-height:1.8;"></div>
         </div>
 
         <div class="form-row full">
-          <div class="field"><label>Note aggiuntive</label><textarea id="note" placeholder="Eventuali richieste o informazioni aggiuntive"></textarea></div>
+          <div class="field"><label>Note aggiuntive</label><textarea id="note"
+              placeholder="Eventuali richieste o informazioni aggiuntive"></textarea></div>
         </div>
 
+        <div id="iscrizione-feedback"></div>
+
         <div class="form-nav">
-          <button class="form-btn btn-back" onclick="prevStep(3)">⬅ Indietro</button>
-          <button class="form-btn btn-submit" onclick="submitForm()">Invia iscrizione ✔</button>
+          <button class="form-btn btn-back" id="btnIscrizioneBack" onclick="prevStep(3)">⬅ Indietro</button>
+          <button class="form-btn btn-submit" id="btnIscrizioneSubmit" onclick="submitForm()">Invia iscrizione
+            ✔</button>
         </div>
       </div>
 
@@ -285,9 +729,11 @@
         <div class="success-icon"><i aria-hidden="true" style="font-style:normal">✓</i></div>
         <div class="tag">Emotional Futsal</div>
         <h2>Iscrizione inviata!</h2>
-        <p>Grazie per aver scelto il Bagnolo Calcio a 5.<br>Riceverai una conferma all'indirizzo email indicato.<br><br>Per info: <span style="color:#F5C800">info@bagnolocalcioa5.com</span></p>
+        <p>Grazie per aver scelto il Bagnolo Calcio a 5.<br>Riceverai una conferma all'indirizzo email
+          indicato.<br><br>Per info: <span style="color:#F5C800">info@bagnolocalcioa5.com</span></p>
         <div style="margin-top:2rem;padding-top:1.5rem;border-top:1px solid #1e1e1e;">
-          <div style="font-size:12px;color:#555;">ASD Bagnolo Calcio a 5 · P.IVA 02060590359 · Matricola F.I.G.C. 630663</div>
+          <div style="font-size:12px;color:#555;">ASD Bagnolo Calcio a 5 · P.IVA 02060590359 · Matricola F.I.G.C. 630663
+          </div>
         </div>
       </div>
     </div>
@@ -300,274 +746,385 @@
 
   <!-- SCRIPT LOGICA MODULO -->
   <script>
-  // Popola la tendina dell'autocompletamento con tutti i comuni italiani
-  document.addEventListener("DOMContentLoaded", () => {
-    const dataList = document.getElementById('comuniList');
-    let options = '';
-    for (const nomeComune in COMUNI) {
-      options += `<option value="${nomeComune}">`;
-    }
-    dataList.innerHTML = options;
-  });
+    // --- CONFIGURAZIONE WEBHOOKS MAKE.COM ---
+    // Sostituisci questo URL con il tuo webhook generato su Make.com per la sezione iscrizioni
+    const URL_WEBHOOK_ISCRIZIONE = "https://hook.eu1.make.com/fxopwl4lz57h6jefnynh7dfh9c5te26r";
 
-  const MESI = ["A","B","C","D","E","H","L","M","P","R","S","T"];
-  const CF_ODD = {0:1,1:0,2:5,3:7,4:9,5:13,6:15,7:17,8:19,9:21,A:1,B:0,C:5,D:7,E:9,F:13,G:15,H:17,I:19,J:21,K:2,L:4,M:18,N:20,O:11,P:3,Q:6,R:8,S:12,T:14,U:16,V:10,W:22,X:25,Y:24,Z:23};
-  const CF_EVEN = {0:0,1:1,2:2,3:3,4:4,5:5,6:6,7:7,8:8,9:9,A:0,B:1,C:2,D:3,E:4,F:5,G:6,H:7,I:8,J:9,K:10,L:11,M:12,N:13,O:14,P:15,Q:16,R:17,S:18,T:19,U:20,V:21,W:22,X:23,Y:24,Z:25};
-
-  function consonants(s) { return s.toUpperCase().replace(/[^A-Z]/g,'').replace(/[AEIOU]/g,''); }
-  function vowels(s) { return s.toUpperCase().replace(/[^AEIOU]/g,''); }
-
-  function codCognome(c) {
-    let r = consonants(c) + vowels(c) + "XXX";
-    return r.substring(0,3);
-  }
-  function codNome(n) {
-    let con = consonants(n);
-    if(con.length >= 4) return con[0]+con[2]+con[3];
-    let r = con + vowels(n) + "XXX";
-    return r.substring(0,3);
-  }
-  function checkChar(cf15) {
-    let s = 0;
-    for(let i=0;i<15;i++) {
-      let c = cf15[i];
-      s += (i%2===0) ? (CF_ODD[c]||0) : (CF_EVEN[c]||0);
-    }
-    return String.fromCharCode(65+(s%26));
-  }
-
-  function calcolaCF() {
-    const nome = document.getElementById('nome').value.trim();
-    const cognome = document.getElementById('cognome').value.trim();
-    const data = document.getElementById('dataNascita').value;
-    const sesso = document.getElementById('sesso').value;
-    const comune = document.getElementById('comuneNascita').value.trim().toUpperCase();
-    const res = document.getElementById('cfResult');
-    const status = document.getElementById('cfStatus');
-    if(!nome||!cognome||!data||!sesso||!comune) {
-      res.textContent = '—';
-      status.textContent = 'Compila nome, cognome, nascita e comune per calcolare il CF';
-      status.className = 'cf-status';
-      return;
-    }
-    const codComune = COMUNI[comune];
-    if(!codComune) {
-      res.textContent = '—';
-      status.textContent = 'Comune non trovato nel database — inserisci il CF manualmente';
-      status.className = 'cf-status';
-      return;
-    }
-    const d = new Date(data);
-    const anno = String(d.getFullYear()).slice(-2);
-    const mese = MESI[d.getMonth()];
-    let giorno = d.getDate();
-    if(sesso==='F') giorno += 40;
-    const gg = String(giorno).padStart(2,'0');
-    const cf15 = (codCognome(cognome)+codNome(nome)+anno+mese+gg+codComune).toUpperCase();
-    const cf = cf15 + checkChar(cf15);
-    res.textContent = cf;
-    status.textContent = '✓ Codice fiscale calcolato correttamente';
-    status.className = 'cf-status ok';
-    confrontaCF();
-  }
-
-  function confrontaCF() {
-    const calcolato = document.getElementById('cfResult').textContent;
-    const manuale = document.getElementById('cfManuale').value.trim().toUpperCase();
-    const hint = document.getElementById('cfConfronto');
-    if(!manuale || calcolato === '—') { hint.textContent=''; return; }
-    if(manuale === calcolato) {
-      hint.textContent = '✓ Il CF inserito corrisponde a quello calcolato';
-      hint.style.color = '#639922';
-    } else {
-      hint.textContent = '⚠ Il CF inserito è diverso da quello calcolato — controlla i dati';
-      hint.style.color = '#e24b4a';
-    }
-  }
-
-  function toggleEsperienza() {
-    const v = document.getElementById('esperienza').value;
-    document.getElementById('anniField').style.display = v==='si' ? 'flex' : 'none';
-    document.getElementById('societa-field').style.display = v==='si' ? 'block' : 'none';
-  }
-
-  function getEta() {
-    const dataNascitaVal = document.getElementById('dataNascita').value;
-    if (!dataNascitaVal) return 0;
-    const d = new Date(dataNascitaVal);
-    const oggi = new Date();
-    let eta = oggi.getFullYear() - d.getFullYear();
-    const m = oggi.getMonth() - d.getMonth();
-    if (m < 0 || (m === 0 && oggi.getDate() < d.getDate())) {
-      eta--;
-    }
-    return eta;
-  }
-
-  function showFileName(input, nameId, wrapId) {
-    const nameEl = document.getElementById(nameId);
-    const wrapEl = document.getElementById(wrapId);
-    if (input.files && input.files.length > 0) {
-      nameEl.textContent = input.files[0].name;
-      wrapEl.classList.remove('error');
-    } else {
-      nameEl.textContent = 'Nessun file selezionato';
-    }
-  }
-
-  function aggiornaStepBar() {
-    const eta = getEta();
-    const stepGenitore = document.querySelector('[data-step="1"]');
-    const stepSportivo = document.querySelector('[data-step="2"]');
-    const stepConsensi = document.querySelector('[data-step="3"]');
-    
-    if (eta >= 18) {
-      stepGenitore.style.display = 'none';
-      stepSportivo.textContent = '2. Sportivo';
-      stepConsensi.textContent = '3. Consensi';
-    } else {
-      stepGenitore.style.display = 'block';
-      stepSportivo.textContent = '3. Sportivo';
-      stepConsensi.textContent = '4. Consensi';
-    }
-  }
-
-  document.getElementById('dataNascita').addEventListener('change', aggiornaStepBar);
-
-  let currentStep = 0;
-  const steps = ['s0','s1','s2','s3'];
-
-  function showStep(n) {
-    steps.forEach((s,i) => {
-      document.getElementById(s).classList.toggle('visible', i===n);
-      const el = document.querySelector(`[data-step="${i}"]`);
-      el.classList.toggle('active', i===n);
-      el.classList.toggle('done', i<n);
+    // Popola la tendina dell'autocompletamento con tutti i comuni italiani
+    document.addEventListener("DOMContentLoaded", () => {
+      const dataList = document.getElementById('comuniList');
+      let options = '';
+      for (const nomeComune in COMUNI) {
+        options += `<option value="${nomeComune}">`;
+      }
+      dataList.innerHTML = options;
     });
-    
-    const eta = getEta();
-    let width = 0;
-    if (eta >= 18) {
-      if (n === 0) width = 33;
-      if (n === 2) width = 66;
-      if (n === 3) width = 100;
-    } else {
-      const pct = [25,50,75,100];
-      width = pct[n];
-    }
-    document.getElementById('progressFill').style.width = width + '%';
-    
-    currentStep = n;
-    window.scrollTo({ top: 0, behavior: 'smooth' }); // Scrolla in alto quando si cambia step
-  }
 
-  function validate(step) {
-    if(step===0) {
-      const fields = ['nome','cognome','dataNascita','sesso','comuneNascita','provinciaNascita'];
-      let ok = true;
-      fields.forEach(id => {
-        const el = document.getElementById(id);
-        if(!el.value.trim()) { el.classList.add('error'); ok=false; } else el.classList.remove('error');
-      });
-      const doc = document.getElementById('docAtleta');
-      if (!doc.files || doc.files.length === 0) {
-        document.getElementById('wrapDocAtleta').classList.add('error');
-        ok = false;
-      }
-      return ok;
+    const MESI = ["A", "B", "C", "D", "E", "H", "L", "M", "P", "R", "S", "T"];
+    const CF_ODD = { 0: 1, 1: 0, 2: 5, 3: 7, 4: 9, 5: 13, 6: 15, 7: 17, 8: 19, 9: 21, A: 1, B: 0, C: 5, D: 7, E: 9, F: 13, G: 15, H: 17, I: 19, J: 21, K: 2, L: 4, M: 18, N: 20, O: 11, P: 3, Q: 6, R: 8, S: 12, T: 14, U: 16, V: 10, W: 22, X: 25, Y: 24, Z: 23 };
+    const CF_EVEN = { 0: 0, 1: 1, 2: 2, 3: 3, 4: 4, 5: 5, 6: 6, 7: 7, 8: 8, 9: 9, A: 0, B: 1, C: 2, D: 3, E: 4, F: 5, G: 6, H: 7, I: 8, J: 9, K: 10, L: 11, M: 12, N: 13, O: 14, P: 15, Q: 16, R: 17, S: 18, T: 19, U: 20, V: 21, W: 22, X: 23, Y: 24, Z: 25 };
+
+    function consonants(s) { return s.toUpperCase().replace(/[^A-Z]/g, '').replace(/[AEIOU]/g, ''); }
+    function vowels(s) { return s.toUpperCase().replace(/[^AEIOU]/g, ''); }
+
+    function codCognome(c) {
+      let r = consonants(c) + vowels(c) + "XXX";
+      return r.substring(0, 3);
     }
-    if(step===1) {
-      if (getEta() >= 18) return true; // Sicurezza aggiuntiva
-      const fields = ['gNome','gCognome','gRelazione','gTelefono','gEmail'];
-      let ok = true;
-      fields.forEach(id => {
-        const el = document.getElementById(id);
-        if(!el.value.trim()) { el.classList.add('error'); ok=false; } else el.classList.remove('error');
-      });
-      const doc = document.getElementById('docGenitore');
-      if (!doc.files || doc.files.length === 0) {
-        document.getElementById('wrapDocGenitore').classList.add('error');
-        ok = false;
-      }
-      return ok;
+    function codNome(n) {
+      let con = consonants(n);
+      if (con.length >= 4) return con[0] + con[2] + con[3];
+      let r = con + vowels(n) + "XXX";
+      return r.substring(0, 3);
     }
-    if(step===2) {
-      const cat = document.getElementById('categoria');
-      if(!cat.value) { cat.classList.add('error'); return false; }
-      cat.classList.remove('error');
+    function checkChar(cf15) {
+      let s = 0;
+      for (let i = 0; i < 15; i++) {
+        let c = cf15[i];
+        s += (i % 2 === 0) ? (CF_ODD[c] || 0) : (CF_EVEN[c] || 0);
+      }
+      return String.fromCharCode(65 + (s % 26));
+    }
+
+    function calcolaCF() {
+      const nome = document.getElementById('nome').value.trim();
+      const cognome = document.getElementById('cognome').value.trim();
+      const data = document.getElementById('dataNascita').value;
+      const sesso = document.getElementById('sesso').value;
+      const comune = document.getElementById('comuneNascita').value.trim().toUpperCase();
+      const res = document.getElementById('cfResult');
+      const status = document.getElementById('cfStatus');
+      if (!nome || !cognome || !data || !sesso || !comune) {
+        res.textContent = '—';
+        status.textContent = 'Compila nome, cognome, nascita e comune per calcolare il CF';
+        status.className = 'cf-status';
+        return;
+      }
+      const codComune = COMUNI[comune];
+      if (!codComune) {
+        res.textContent = '—';
+        status.textContent = 'Comune non trovato nel database — inserisci il CF manualmente';
+        status.className = 'cf-status';
+        return;
+      }
+      const d = new Date(data);
+      const anno = String(d.getFullYear()).slice(-2);
+      const mese = MESI[d.getMonth()];
+      let giorno = d.getDate();
+      if (sesso === 'F') giorno += 40;
+      const gg = String(giorno).padStart(2, '0');
+      const cf15 = (codCognome(cognome) + codNome(nome) + anno + mese + gg + codComune).toUpperCase();
+      const cf = cf15 + checkChar(cf15);
+      res.textContent = cf;
+      status.textContent = '✓ Codice fiscale calcolato correttamente';
+      status.className = 'cf-status ok';
+      confrontaCF();
+    }
+
+    function confrontaCF() {
+      const calcolato = document.getElementById('cfResult').textContent;
+      const manuale = document.getElementById('cfManuale').value.trim().toUpperCase();
+      const hint = document.getElementById('cfConfronto');
+      if (!manuale || calcolato === '—') { hint.textContent = ''; return; }
+      if (manuale === calcolato) {
+        hint.textContent = '✓ Il CF inserito corrisponde a quello calcolato';
+        hint.style.color = '#639922';
+      } else {
+        hint.textContent = '⚠ Il CF inserito è diverso da quello calcolato — controlla i dati';
+        hint.style.color = '#e24b4a';
+      }
+    }
+
+    function toggleEsperienza() {
+      const v = document.getElementById('esperienza').value;
+      document.getElementById('anniField').style.display = v === 'si' ? 'flex' : 'none';
+      document.getElementById('societa-field').style.display = v === 'si' ? 'block' : 'none';
+    }
+
+    function getEta() {
+      const dataNascitaVal = document.getElementById('dataNascita').value;
+      if (!dataNascitaVal) return 0;
+      const d = new Date(dataNascitaVal);
+      const oggi = new Date();
+      let eta = oggi.getFullYear() - d.getFullYear();
+      const m = oggi.getMonth() - d.getMonth();
+      if (m < 0 || (m === 0 && oggi.getDate() < d.getDate())) {
+        eta--;
+      }
+      return eta;
+    }
+
+    const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
+
+    function showFileName(input, nameId, wrapId) {
+      const nameEl = document.getElementById(nameId);
+      const wrapEl = document.getElementById(wrapId);
+      if (input.files && input.files.length > 0) {
+        const file = input.files[0];
+        if (file.size > MAX_FILE_SIZE) {
+          nameEl.innerHTML = `<span style="color:#e24b4a;font-weight:bold;">⚠️ Errore: Il file supera i 5MB (Dimensione: ${(file.size / (1024 * 1024)).toFixed(2)}MB)</span>`;
+          wrapEl.classList.add('error');
+          input.value = ""; // Resetta l'input per invalidare il modulo
+        } else {
+          nameEl.textContent = file.name + " (" + (file.size / 1024).toFixed(1) + " KB)";
+          wrapEl.classList.remove('error');
+        }
+      } else {
+        nameEl.textContent = 'Nessun file selezionato';
+      }
+    }
+
+    function aggiornaStepBar() {
+      const eta = getEta();
+      const stepGenitore = document.querySelector('[data-step="1"]');
+      const stepSportivo = document.querySelector('[data-step="2"]');
+      const stepConsensi = document.querySelector('[data-step="3"]');
+
+      if (eta >= 18) {
+        stepGenitore.style.display = 'none';
+        stepSportivo.textContent = '2. Sportivo';
+        stepConsensi.textContent = '3. Consensi';
+      } else {
+        stepGenitore.style.display = 'block';
+        stepSportivo.textContent = '3. Sportivo';
+        stepConsensi.textContent = '4. Consensi';
+      }
+    }
+
+    document.getElementById('dataNascita').addEventListener('change', aggiornaStepBar);
+
+    let currentStep = 0;
+    const steps = ['s0', 's1', 's2', 's3'];
+
+    function showStep(n) {
+      steps.forEach((s, i) => {
+        document.getElementById(s).classList.toggle('visible', i === n);
+        const el = document.querySelector(`[data-step="${i}"]`);
+        el.classList.toggle('active', i === n);
+        el.classList.toggle('done', i < n);
+      });
+
+      const eta = getEta();
+      let width = 0;
+      if (eta >= 18) {
+        if (n === 0) width = 33;
+        if (n === 2) width = 66;
+        if (n === 3) width = 100;
+      } else {
+        const pct = [25, 50, 75, 100];
+        width = pct[n];
+      }
+      document.getElementById('progressFill').style.width = width + '%';
+
+      currentStep = n;
+      window.scrollTo({ top: 0, behavior: 'smooth' }); // Scrolla in alto quando si cambia step
+    }
+
+    function validate(step) {
+      if (step === 0) {
+        const fields = ['nome', 'cognome', 'dataNascita', 'sesso', 'comuneNascita', 'provinciaNascita'];
+        let ok = true;
+        fields.forEach(id => {
+          const el = document.getElementById(id);
+          if (!el.value.trim()) { el.classList.add('error'); ok = false; } else el.classList.remove('error');
+        });
+        const doc = document.getElementById('docAtleta');
+        if (!doc.files || doc.files.length === 0) {
+          document.getElementById('wrapDocAtleta').classList.add('error');
+          ok = false;
+        }
+        return ok;
+      }
+      if (step === 1) {
+        if (getEta() >= 18) return true; // Sicurezza aggiuntiva
+        const fields = ['gNome', 'gCognome', 'gRelazione', 'gTelefono', 'gEmail'];
+        let ok = true;
+        fields.forEach(id => {
+          const el = document.getElementById(id);
+          if (!el.value.trim()) { el.classList.add('error'); ok = false; } else el.classList.remove('error');
+        });
+        const doc = document.getElementById('docGenitore');
+        if (!doc.files || doc.files.length === 0) {
+          document.getElementById('wrapDocGenitore').classList.add('error');
+          ok = false;
+        }
+        return ok;
+      }
+      if (step === 2) {
+        const cat = document.getElementById('categoria');
+        if (!cat.value) { cat.classList.add('error'); return false; }
+        cat.classList.remove('error');
+        return true;
+      }
+      if (step === 3) {
+        if (!document.getElementById('c1').checked || !document.getElementById('c4').checked) {
+          alert('Accetta i consensi obbligatori per procedere.');
+          return false;
+        }
+        return true;
+      }
       return true;
     }
-    if(step===3) {
-      if(!document.getElementById('c1').checked || !document.getElementById('c4').checked) {
-        alert('Accetta i consensi obbligatori per procedere.');
-        return false;
-      }
-      return true;
+
+    function nextStep(current) {
+      if (!validate(current)) return;
+      if (current === 0) calcolaCF();
+
+      const eta = getEta();
+      let next = current + 1;
+      if (current === 0 && eta >= 18) next = 2; // Salta il genitore se maggiorenne
+
+      if (next === 2) buildRiepilogo();
+      showStep(next);
     }
-    return true;
-  }
 
-  function nextStep(current) {
-    if(!validate(current)) return;
-    if(current===0) calcolaCF();
-    
-    const eta = getEta();
-    let next = current + 1;
-    if (current === 0 && eta >= 18) next = 2; // Salta il genitore se maggiorenne
-    
-    if(next===2) buildRiepilogo();
-    showStep(next);
-  }
+    function prevStep(current) {
+      const eta = getEta();
+      let prev = current - 1;
+      if (current === 2 && eta >= 18) prev = 0; // Torna ad Atleta se maggiorenne
+      showStep(prev);
+    }
 
-  function prevStep(current) { 
-    const eta = getEta();
-    let prev = current - 1;
-    if (current === 2 && eta >= 18) prev = 0; // Torna ad Atleta se maggiorenne
-    showStep(prev); 
-  }
+    function buildRiepilogo() {
+      const cf = document.getElementById('cfResult').textContent;
+      const eta = getEta();
+      const docAtleta = document.getElementById('docAtleta').files[0];
+      const nomeDocAtleta = docAtleta ? docAtleta.name : 'Nessun file';
 
-  function buildRiepilogo() {
-    const cf = document.getElementById('cfResult').textContent;
-    const eta = getEta();
-    const docAtleta = document.getElementById('docAtleta').files[0];
-    const nomeDocAtleta = docAtleta ? docAtleta.name : 'Nessun file';
-    
-    let html = `
+      let html = `
       <strong style="color:#fff">${document.getElementById('nome').value} ${document.getElementById('cognome').value}</strong><br>
       Nato il: ${document.getElementById('dataNascita').value.split('-').reverse().join('/')}<br>
       CF: <span style="font-family:monospace;color:#F5C800;letter-spacing:1px">${cf}</span><br>
       Doc. Atleta: <strong style="color:#fff">${nomeDocAtleta}</strong><br>
       Categoria: <strong style="color:#fff">${document.getElementById('categoria').value}</strong><br>
     `;
-    
-    if (eta < 18) {
-      const docGenitore = document.getElementById('docGenitore').files[0];
-      const nomeDocGenitore = docGenitore ? docGenitore.name : 'Nessun file';
-      html += `
+
+      if (eta < 18) {
+        const docGenitore = document.getElementById('docGenitore').files[0];
+        const nomeDocGenitore = docGenitore ? docGenitore.name : 'Nessun file';
+        html += `
         Genitore: ${document.getElementById('gNome').value} ${document.getElementById('gCognome').value} · ${document.getElementById('gTelefono').value}<br>
         Email: ${document.getElementById('gEmail').value}<br>
         Doc. Genitore: <strong style="color:#fff">${nomeDocGenitore}</strong>
       `;
+      }
+      document.getElementById('riepilogo').innerHTML = html;
     }
-    document.getElementById('riepilogo').innerHTML = html;
-  }
 
-  function submitForm() {
-    if(!validate(3)) return;
-    document.getElementById('s3').classList.remove('visible');
-    document.getElementById('successScreen').classList.add('visible');
-    document.getElementById('stepBar').style.display='none';
-    document.querySelector('.progress').style.display='none';
-  }
+    async function submitForm() {
+      if (!validate(3)) return;
 
-  ['nome','cognome','dataNascita','sesso','comuneNascita'].forEach(id => {
-    document.getElementById(id).addEventListener('input', calcolaCF);
-    document.getElementById(id).addEventListener('change', calcolaCF);
-  });
-  document.getElementById('cfManuale').addEventListener('input', confrontaCF);
+      const btnSubmit = document.getElementById('btnIscrizioneSubmit');
+      const btnBack = document.getElementById('btnIscrizioneBack');
+      const feedback = document.getElementById('iscrizione-feedback');
+
+      if (feedback) feedback.innerHTML = '';
+
+      // Mostra stato caricamento premium
+      btnSubmit.classList.add('btn-loading');
+      btnSubmit.disabled = true;
+      btnBack.disabled = true;
+
+      // Costruisce FormData per supportare l'upload dei file
+      const formData = new FormData();
+
+      // 1. Dati Atleta
+      formData.append('nome', document.getElementById('nome').value.trim());
+      formData.append('cognome', document.getElementById('cognome').value.trim());
+      formData.append('dataNascita', document.getElementById('dataNascita').value);
+      formData.append('sesso', document.getElementById('sesso').value);
+      formData.append('comuneNascita', document.getElementById('comuneNascita').value.trim());
+      formData.append('provinciaNascita', document.getElementById('provinciaNascita').value.trim().toUpperCase());
+      formData.append('cfCalcolato', document.getElementById('cfResult').textContent);
+      formData.append('cfManuale', document.getElementById('cfManuale').value.trim().toUpperCase());
+      formData.append('comuneResidenza', document.getElementById('comuneRes').value.trim());
+      formData.append('indirizzo', document.getElementById('indirizzo').value.trim());
+
+      const docAtletaFile = document.getElementById('docAtleta').files[0];
+      if (docAtletaFile) {
+        formData.append('docAtleta', docAtletaFile);
+      }
+
+      // 2. Dati Genitore (solo se l'atleta è minorenne)
+      const eta = getEta();
+      formData.append('etaAtleta', eta);
+      formData.append('isMinorenne', eta < 18);
+
+      if (eta < 18) {
+        formData.append('gNome', document.getElementById('gNome').value.trim());
+        formData.append('gCognome', document.getElementById('gCognome').value.trim());
+        formData.append('gRelazione', document.getElementById('gRelazione').value);
+        formData.append('gTelefono', document.getElementById('gTelefono').value.trim());
+        formData.append('gEmail', document.getElementById('gEmail').value.trim());
+        formData.append('gEmergenza', document.getElementById('gEmergenza').value.trim());
+
+        const docGenitoreFile = document.getElementById('docGenitore').files[0];
+        if (docGenitoreFile) {
+          formData.append('docGenitore', docGenitoreFile);
+        }
+      }
+
+      // 3. Informazioni Sportive
+      formData.append('categoria', document.getElementById('categoria').value);
+      formData.append('esperienza', document.getElementById('esperienza').value);
+      formData.append('anniEsperienza', document.getElementById('anni').value);
+      formData.append('societaPrecedente', document.getElementById('societaPrec').value.trim());
+      formData.append('ruoloPreferito', document.getElementById('ruolo').value);
+      formData.append('piedeDominante', document.getElementById('piede').value);
+      formData.append('patologieNoteMediche', document.getElementById('mediche').value.trim());
+
+      // 4. Consensi e Note
+      formData.append('consensoPrivacy', document.getElementById('c1').checked);
+      formData.append('consensoImmagini', document.getElementById('c2').checked);
+      formData.append('consensoComunicazioni', document.getElementById('c3').checked);
+      formData.append('consensoRegolamento', document.getElementById('c4').checked);
+      formData.append('noteAggiuntive', document.getElementById('note').value.trim());
+      formData.append('timestamp', new Date().toISOString());
+
+      try {
+        const response = await fetch(URL_WEBHOOK_ISCRIZIONE, {
+          method: 'POST',
+          body: formData
+        });
+
+        if (response.ok) {
+          // Successo
+          document.getElementById('s3').classList.remove('visible');
+          document.getElementById('successScreen').classList.add('visible');
+          document.getElementById('stepBar').style.display = 'none';
+          document.querySelector('.progress').style.display = 'none';
+        } else {
+          throw new Error('Server returned status: ' + response.status);
+        }
+      } catch (error) {
+        console.error('Errore durante l\'invio del modulo iscrizione:', error);
+        if (feedback) {
+          feedback.innerHTML = `
+          <div class="error-message">
+            <span>⚠️</span>
+            <span>Si è verificato un errore durante l'invio dell'iscrizione. Riprova più tardi o contatta direttamente <strong>info@bagnolocalcioa5.com</strong>. I tuoi dati inseriti sono stati conservati.</span>
+          </div>
+        `;
+        } else {
+          alert('Si è verificato un errore durante l\'invio dell\'iscrizione. Ti invitiamo a riprovare o a contattare info@bagnolocalcioa5.com. I tuoi dati inseriti non sono andati perduti.');
+        }
+      } finally {
+        // Ripristina pulsanti
+        btnSubmit.classList.remove('btn-loading');
+        btnSubmit.disabled = false;
+        btnBack.disabled = false;
+      }
+    }
+
+    ['nome', 'cognome', 'dataNascita', 'sesso', 'comuneNascita'].forEach(id => {
+      document.getElementById(id).addEventListener('input', calcolaCF);
+      document.getElementById(id).addEventListener('change', calcolaCF);
+    });
+    document.getElementById('cfManuale').addEventListener('input', confrontaCF);
   </script>
 
   <!-- JS PRINCIPALE DEL SITO (Per far funzionare il menu hamburger) -->
   <script src="main.js"></script>
 </body>
+
 </html>

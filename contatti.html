@@ -43,17 +43,17 @@
             <label
               style="display:block;font-family:var(--fd);font-weight:700;font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--gr);margin-bottom:6px">Nome
               e Cognome</label>
-            <input type="text" placeholder="Es. Mario Rossi" required>
+            <input type="text" id="contatti-nome" name="nome" placeholder="Es. Mario Rossi" required>
           </div>
           <div style="margin-bottom:14px">
             <label
               style="display:block;font-family:var(--fd);font-weight:700;font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--gr);margin-bottom:6px">Email</label>
-            <input type="email" placeholder="tua@email.it" required>
+            <input type="email" id="contatti-email" name="email" placeholder="tua@email.it" required>
           </div>
           <div style="margin-bottom:14px">
             <label
               style="display:block;font-family:var(--fd);font-weight:700;font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--gr);margin-bottom:6px">Oggetto</label>
-            <select required>
+            <select id="contatti-oggetto" name="oggetto" required>
               <option value="">Seleziona...</option>
               <option>Informazioni generali</option>
               <option>Iscrizioni settore giovanile</option>
@@ -64,9 +64,10 @@
           <div style="margin-bottom:18px">
             <label
               style="display:block;font-family:var(--fd);font-weight:700;font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--gr);margin-bottom:6px">Messaggio</label>
-            <textarea placeholder="Scrivi qui il tuo messaggio..." required></textarea>
+            <textarea id="contatti-messaggio" name="messaggio" placeholder="Scrivi qui il tuo messaggio..." required></textarea>
           </div>
           <button type="submit" class="btn" style="width:100%">Invia Messaggio →</button>
+          <div id="contatti-feedback"></div>
         </form>
 
         <!-- INFO CONTATTO -->
