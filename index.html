@@ -6,8 +6,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ASD Bagnolo Calcio a 5 — Emotional Futsal</title>
   <script>
-    window.onerror = function(msg, url, lineNo, columnNo, error) {
-      document.addEventListener('DOMContentLoaded', function() {
+    window.onerror = function (msg, url, lineNo, columnNo, error) {
+      document.addEventListener('DOMContentLoaded', function () {
         var err = document.createElement('div');
         err.style.cssText = 'position:fixed;top:0;left:0;right:0;background:red;color:white;z-index:9999;padding:20px;font-size:16px;font-weight:bold;';
         err.innerText = 'ERRORE JS: ' + msg + ' (Linea ' + lineNo + ')';
@@ -15,8 +15,8 @@
       });
       return false;
     };
-    window.addEventListener('unhandledrejection', function(event) {
-      document.addEventListener('DOMContentLoaded', function() {
+    window.addEventListener('unhandledrejection', function (event) {
+      document.addEventListener('DOMContentLoaded', function () {
         var err = document.createElement('div');
         err.style.cssText = 'position:fixed;top:60px;left:0;right:0;background:orange;color:white;z-index:9999;padding:20px;font-size:16px;font-weight:bold;';
         err.innerText = 'PROMISE ERROR: ' + (event.reason && event.reason.message ? event.reason.message : event.reason);
@@ -102,7 +102,8 @@
         </div>
         <a href="news.html" class="bto">Tutte le news →</a>
       </div>
-      <div id="home-news-container" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px">
+      <div id="home-news-container"
+        style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px">
         <!-- JS genererà qui le card -->
       </div>
     </div>

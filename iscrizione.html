@@ -548,17 +548,7 @@
               placeholder="Via e numero civico"></div>
         </div>
 
-        <div class="form-row full">
-          <div class="field">
-            <label>Documento d'identità Atleta (Fronte/Retro) <span class="req">*</span></label>
-            <div class="file-input-wrapper" id="wrapDocAtleta">
-              <label for="docAtleta">Seleziona file (PDF, JPG, PNG)</label>
-              <input type="file" id="docAtleta" accept=".pdf,image/png,image/jpeg"
-                onchange="showFileName(this, 'nameDocAtleta', 'wrapDocAtleta')">
-              <div class="file-name" id="nameDocAtleta">Nessun file selezionato</div>
-            </div>
-          </div>
-        </div>
+
 
         <div class="form-nav">
           <div></div><button class="form-btn btn-next" onclick="nextStep(0)">Avanti ➔</button>
@@ -596,17 +586,7 @@
               placeholder="Nome e telefono"></div>
         </div>
 
-        <div class="form-row full">
-          <div class="field">
-            <label>Documento d'identità Genitore / Tutore <span class="req">*</span></label>
-            <div class="file-input-wrapper" id="wrapDocGenitore">
-              <label for="docGenitore">Seleziona file (PDF, JPG, PNG)</label>
-              <input type="file" id="docGenitore" accept=".pdf,image/png,image/jpeg"
-                onchange="showFileName(this, 'nameDocGenitore', 'wrapDocGenitore')">
-              <div class="file-name" id="nameDocGenitore">Nessun file selezionato</div>
-            </div>
-          </div>
-        </div>
+
 
         <div class="form-nav">
           <button class="form-btn btn-back" onclick="prevStep(1)">⬅ Indietro</button>
@@ -854,25 +834,7 @@
       return eta;
     }
 
-    const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
 
-    function showFileName(input, nameId, wrapId) {
-      const nameEl = document.getElementById(nameId);
-      const wrapEl = document.getElementById(wrapId);
-      if (input.files && input.files.length > 0) {
-        const file = input.files[0];
-        if (file.size > MAX_FILE_SIZE) {
-          nameEl.innerHTML = `<span style="color:#e24b4a;font-weight:bold;">⚠️ Errore: Il file supera i 5MB (Dimensione: ${(file.size / (1024 * 1024)).toFixed(2)}MB)</span>`;
-          wrapEl.classList.add('error');
-          input.value = ""; // Resetta l'input per invalidare il modulo
-        } else {
-          nameEl.textContent = file.name + " (" + (file.size / 1024).toFixed(1) + " KB)";
-          wrapEl.classList.remove('error');
-        }
-      } else {
-        nameEl.textContent = 'Nessun file selezionato';
-      }
-    }
 
     function aggiornaStepBar() {
       const eta = getEta();
@@ -928,11 +890,6 @@
           const el = document.getElementById(id);
           if (!el.value.trim()) { el.classList.add('error'); ok = false; } else el.classList.remove('error');
         });
-        const doc = document.getElementById('docAtleta');
-        if (!doc.files || doc.files.length === 0) {
-          document.getElementById('wrapDocAtleta').classList.add('error');
-          ok = false;
-        }
         return ok;
       }
       if (step === 1) {
@@ -943,11 +900,6 @@
           const el = document.getElementById(id);
           if (!el.value.trim()) { el.classList.add('error'); ok = false; } else el.classList.remove('error');
         });
-        const doc = document.getElementById('docGenitore');
-        if (!doc.files || doc.files.length === 0) {
-          document.getElementById('wrapDocGenitore').classList.add('error');
-          ok = false;
-        }
         return ok;
       }
       if (step === 2) {
@@ -988,24 +940,18 @@
     function buildRiepilogo() {
       const cf = document.getElementById('cfResult').textContent;
       const eta = getEta();
-      const docAtleta = document.getElementById('docAtleta').files[0];
-      const nomeDocAtleta = docAtleta ? docAtleta.name : 'Nessun file';
 
       let html = `
       <strong style="color:#fff">${document.getElementById('nome').value} ${document.getElementById('cognome').value}</strong><br>
       Nato il: ${document.getElementById('dataNascita').value.split('-').reverse().join('/')}<br>
       CF: <span style="font-family:monospace;color:#F5C800;letter-spacing:1px">${cf}</span><br>
-      Doc. Atleta: <strong style="color:#fff">${nomeDocAtleta}</strong><br>
       Categoria: <strong style="color:#fff">${document.getElementById('categoria').value}</strong><br>
     `;
 
       if (eta < 18) {
-        const docGenitore = document.getElementById('docGenitore').files[0];
-        const nomeDocGenitore = docGenitore ? docGenitore.name : 'Nessun file';
         html += `
         Genitore: ${document.getElementById('gNome').value} ${document.getElementById('gCognome').value} · ${document.getElementById('gTelefono').value}<br>
         Email: ${document.getElementById('gEmail').value}<br>
-        Doc. Genitore: <strong style="color:#fff">${nomeDocGenitore}</strong>
       `;
       }
       document.getElementById('riepilogo').innerHTML = html;
@@ -1025,66 +971,62 @@
       btnSubmit.disabled = true;
       btnBack.disabled = true;
 
-      // Costruisce FormData per supportare l'upload dei file
-      const formData = new FormData();
-
       // 1. Dati Atleta
-      formData.append('nome', document.getElementById('nome').value.trim());
-      formData.append('cognome', document.getElementById('cognome').value.trim());
-      formData.append('dataNascita', document.getElementById('dataNascita').value);
-      formData.append('sesso', document.getElementById('sesso').value);
-      formData.append('comuneNascita', document.getElementById('comuneNascita').value.trim());
-      formData.append('provinciaNascita', document.getElementById('provinciaNascita').value.trim().toUpperCase());
-      formData.append('cfCalcolato', document.getElementById('cfResult').textContent);
-      formData.append('cfManuale', document.getElementById('cfManuale').value.trim().toUpperCase());
-      formData.append('comuneResidenza', document.getElementById('comuneRes').value.trim());
-      formData.append('indirizzo', document.getElementById('indirizzo').value.trim());
-
-      const docAtletaFile = document.getElementById('docAtleta').files[0];
-      if (docAtletaFile) {
-        formData.append('docAtleta', docAtletaFile);
-      }
+      const atleta = {
+        nome: document.getElementById('nome').value.trim(),
+        cognome: document.getElementById('cognome').value.trim(),
+        dataNascita: document.getElementById('dataNascita').value,
+        sesso: document.getElementById('sesso').value,
+        comuneNascita: document.getElementById('comuneNascita').value.trim(),
+        provinciaNascita: document.getElementById('provinciaNascita').value.trim().toUpperCase(),
+        cfCalcolato: document.getElementById('cfResult').textContent,
+        cfManuale: document.getElementById('cfManuale').value.trim().toUpperCase(),
+        comuneResidenza: document.getElementById('comuneRes').value.trim(),
+        indirizzo: document.getElementById('indirizzo').value.trim()
+      };
 
       // 2. Dati Genitore (solo se l'atleta è minorenne)
       const eta = getEta();
-      formData.append('etaAtleta', eta);
-      formData.append('isMinorenne', eta < 18);
-
+      let genitore = null;
       if (eta < 18) {
-        formData.append('gNome', document.getElementById('gNome').value.trim());
-        formData.append('gCognome', document.getElementById('gCognome').value.trim());
-        formData.append('gRelazione', document.getElementById('gRelazione').value);
-        formData.append('gTelefono', document.getElementById('gTelefono').value.trim());
-        formData.append('gEmail', document.getElementById('gEmail').value.trim());
-        formData.append('gEmergenza', document.getElementById('gEmergenza').value.trim());
-
-        const docGenitoreFile = document.getElementById('docGenitore').files[0];
-        if (docGenitoreFile) {
-          formData.append('docGenitore', docGenitoreFile);
-        }
+        genitore = {
+          nome: document.getElementById('gNome').value.trim(),
+          cognome: document.getElementById('gCognome').value.trim(),
+          relazione: document.getElementById('gRelazione').value,
+          telefono: document.getElementById('gTelefono').value.trim(),
+          email: document.getElementById('gEmail').value.trim(),
+          contattoEmergenza: document.getElementById('gEmergenza').value.trim()
+        };
       }
 
-      // 3. Informazioni Sportive
-      formData.append('categoria', document.getElementById('categoria').value);
-      formData.append('esperienza', document.getElementById('esperienza').value);
-      formData.append('anniEsperienza', document.getElementById('anni').value);
-      formData.append('societaPrecedente', document.getElementById('societaPrec').value.trim());
-      formData.append('ruoloPreferito', document.getElementById('ruolo').value);
-      formData.append('piedeDominante', document.getElementById('piede').value);
-      formData.append('patologieNoteMediche', document.getElementById('mediche').value.trim());
-
-      // 4. Consensi e Note
-      formData.append('consensoPrivacy', document.getElementById('c1').checked);
-      formData.append('consensoImmagini', document.getElementById('c2').checked);
-      formData.append('consensoComunicazioni', document.getElementById('c3').checked);
-      formData.append('consensoRegolamento', document.getElementById('c4').checked);
-      formData.append('noteAggiuntive', document.getElementById('note').value.trim());
-      formData.append('timestamp', new Date().toISOString());
+      // Costruisce il payload finale in JSON
+      const payload = {
+        atleta: atleta,
+        etaAtleta: eta,
+        isMinorenne: eta < 18,
+        genitore: genitore,
+        categoria: document.getElementById('categoria').value,
+        esperienza: document.getElementById('esperienza').value,
+        anniEsperienza: document.getElementById('anni').value,
+        societaPrecedente: document.getElementById('societaPrec').value.trim(),
+        ruoloPreferito: document.getElementById('ruolo').value,
+        piedeDominante: document.getElementById('piede').value,
+        patologieNoteMediche: document.getElementById('mediche').value.trim(),
+        consensoPrivacy: document.getElementById('c1').checked,
+        consensoImmagini: document.getElementById('c2').checked,
+        consensoComunicazioni: document.getElementById('c3').checked,
+        consensoRegolamento: document.getElementById('c4').checked,
+        noteAggiuntive: document.getElementById('note').value.trim(),
+        timestamp: new Date().toISOString()
+      };
 
       try {
         const response = await fetch(URL_WEBHOOK_ISCRIZIONE, {
           method: 'POST',
-          body: formData
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(payload)
         });
 
         if (response.ok) {
