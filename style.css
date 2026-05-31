@@ -127,8 +127,8 @@ a {
   transition: color .2s;
 }
 
-.navlinks a:hover,
-.navlinks a.active {
+.navlinks a:hover:not(.cta),
+.navlinks a.active:not(.cta) {
   color: var(--y);
 }
 
