@@ -31,6 +31,17 @@ body {
   font-size: 15px;
   line-height: 1.6;
   overflow-x: hidden;
+  animation: fadeInPage 0.6s ease-out forwards;
+}
+
+@keyframes fadeInPage {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 a {
@@ -228,18 +239,21 @@ section {
 
 /* ---- CARDS ---- */
 .card {
-  background: var(--bg2);
-  border: 1px solid var(--bd);
+  background: rgba(24, 24, 24, 0.6);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
   border-radius: 6px;
   overflow: hidden;
   cursor: pointer;
-  transition: all .25s;
+  transition: all .3s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
 .card:hover {
-  border-color: var(--bdy);
-  transform: translateY(-4px);
-  box-shadow: 0 8px 30px rgba(0, 0, 0, .3);
+  border-color: rgba(245, 197, 0, 0.5);
+  transform: translateY(-5px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, .4);
 }
 
 /* ---- TABLE ---- */
@@ -647,5 +661,38 @@ button:disabled,
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+/* ---- SCROLL REVEAL ANIMATIONS ---- */
+.reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: all 0.8s cubic-bezier(0.5, 0, 0, 1);
+}
+
+.reveal.active {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ---- SKELETON LOADERS ---- */
+.skeleton {
+  background: #2a2a2a;
+  background: linear-gradient(110deg, #2a2a2a 8%, #3a3a3a 18%, #2a2a2a 33%);
+  border-radius: 4px;
+  background-size: 200% 100%;
+  animation: 1.5s shine linear infinite;
+  color: transparent !important;
+  border: none !important;
+}
+
+.skeleton * {
+  visibility: hidden;
+}
+
+@keyframes shine {
+  to {
+    background-position-x: -200%;
   }
 }

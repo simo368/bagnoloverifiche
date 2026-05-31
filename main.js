@@ -12,15 +12,30 @@ const URL_CLASSIFICA = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRGt93Sn
 const URL_RISULTATI = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRGt93SnbyMxCa8iiNGD1kSFmINdNsFT7uIVYvCuuqGj8IuZ4OyDcW5fqvRSGpyuAfV-2kE7WYMLMLP/pub?gid=18686350&single=true&output=tsv";
 const URL_NEWS = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRGt93SnbyMxCa8iiNGD1kSFmINdNsFT7uIVYvCuuqGj8IuZ4OyDcW5fqvRSGpyuAfV-2kE7WYMLMLP/pub?gid=327540627&single=true&output=tsv";
 
-// Funzione di utilità per leggere e parsare il TSV
+// Funzione di utilità per leggere e parsare il TSV con caching
 async function fetchTSV(url) {
   try {
     if (!url || url.includes("INSERISCI_QUI")) return [];
+
+    const cacheKey = 'tsv_cache_' + url;
+    const cachedData = sessionStorage.getItem(cacheKey);
+    const cacheTimestamp = sessionStorage.getItem(cacheKey + '_time');
+
+    // Usa cache se ha meno di 5 minuti (300000 ms)
+    if (cachedData && cacheTimestamp && (Date.now() - parseInt(cacheTimestamp) < 300000)) {
+      return JSON.parse(cachedData);
+    }
+
     const res = await fetch(url);
     const text = await res.text();
     const lines = text.split('\n').filter(line => line.trim() !== '');
     lines.shift(); // Rimuove riga di intestazione
-    return lines.map(line => line.split('\t').map(cell => cell.trim()));
+    const parsedData = lines.map(line => line.split('\t').map(cell => cell.trim()));
+
+    sessionStorage.setItem(cacheKey, JSON.stringify(parsedData));
+    sessionStorage.setItem(cacheKey + '_time', Date.now().toString());
+
+    return parsedData;
   } catch (e) {
     console.error("Errore nel caricamento dati da Fogli Google: ", e);
     return [];
@@ -142,6 +157,26 @@ document.addEventListener('DOMContentLoaded', () => {
       tl.appendChild(div);
     });
   }
+
+  /* ---- Scroll Reveal Animations ---- */
+  const observerOptions = {
+    root: null,
+    rootMargin: '0px',
+    threshold: 0.15
+  };
+  const observer = new IntersectionObserver((entries, observer) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('active');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, observerOptions);
+
+  // Per assicurarsi che gli elementi dinamici vengano osservati dopo il rendering, 
+  // esportiamo l'observer globale
+  window.revealObserver = observer;
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
 });
 
@@ -418,7 +453,7 @@ async function renderNews() {
       : '<div style="width:50px;height:50px;border-radius:50%;background:rgba(245,197,0,.15);display:flex;align-items:center;justify-content:center"><div style="width:22px;height:22px;border-radius:50%;background:rgba(245,197,0,.3)"></div></div>';
 
     return '' +
-      '<div class="card" onclick="openNewsModal(' + index + ')" style="text-decoration:none;display:block;cursor:pointer;">' +
+      '<div class="card reveal" onclick="openNewsModal(' + index + ')" style="text-decoration:none;display:block;cursor:pointer;">' +
       '<div style="height:140px;' + cardImageStyle + 'display:flex;align-items:center;justify-content:center;position:relative">' +
       iconHtml +
       '<div style="position:absolute;top:10px;left:10px;background:' + tagColor + ';color:' + tagText + ';font-family:var(--fd);font-weight:800;font-size:9px;letter-spacing:.15em;text-transform:uppercase;padding:3px 8px;border-radius:2px">' + cat + '</div>' +
@@ -437,6 +472,9 @@ async function renderNews() {
     reversedData.slice(0, 3).forEach((r, index) => {
       homeContainer.innerHTML += buildCardHtml(r, index);
     });
+    if (window.revealObserver) {
+      homeContainer.querySelectorAll('.reveal').forEach(el => window.revealObserver.observe(el));
+    }
   }
 
   if (newsContainer) {
@@ -444,5 +482,8 @@ async function renderNews() {
     reversedData.forEach((r, index) => {
       newsContainer.innerHTML += buildCardHtml(r, index);
     });
+    if (window.revealObserver) {
+      newsContainer.querySelectorAll('.reveal').forEach(el => window.revealObserver.observe(el));
+    }
   }
 }
