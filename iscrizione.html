@@ -4,6 +4,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy"
+    content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://hook.eu1.make.com https://docs.google.com;">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <script>
+    if (window.top !== window.self) {
+      window.top.location = window.self.location;
+    }
+  </script>
   <title>Modulo di Iscrizione — ASD Bagnolo Calcio a 5</title>
   <meta name="description" content="Modulo di iscrizione online per l'ASD Bagnolo Calcio a 5.">
 
@@ -487,13 +495,6 @@
     </div>
 
     <div class="form-wrap">
-      <!-- Campo Honeypot Invisibile per Anti-Spam -->
-      <div style="position: absolute; left: -5000px; top: auto; width: 1px; height: 1px; overflow: hidden;">
-        <label for="iscrizione-cf-verification">Non compilare questo campo se sei umano</label>
-        <input type="text" id="iscrizione-cf-verification" name="cf_control_verification" tabindex="-1"
-          autocomplete="off">
-      </div>
-
       <div class="step-bar" id="stepBar">
         <div class="step active" data-step="0">1. Atleta</div>
         <div class="step" data-step="1">2. Genitore</div>
@@ -555,7 +556,17 @@
               placeholder="Via e numero civico"></div>
         </div>
 
-
+        <div style="margin-top:20px;margin-bottom:10px;border-top:1px solid #1e1e1e;padding-top:16px;">
+          <div
+            style="font-size:12px;font-weight:600;color:#F5C800;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;">
+            Recapiti Principali</div>
+          <div class="form-row">
+            <div class="field"><label>Email (conferma iscrizione) <span class="req">*</span></label><input type="email"
+                id="emailContatto" placeholder="tua@email.it"></div>
+            <div class="field"><label>Telefono <span class="req">*</span></label><input type="tel" id="telefonoContatto"
+                placeholder="Es. 333 1234567"></div>
+          </div>
+        </div>
 
         <div class="form-nav">
           <div></div><button class="form-btn btn-next" onclick="nextStep(0)">Avanti ➔</button>
@@ -581,15 +592,7 @@
               <option>Tutore legale</option>
             </select>
           </div>
-          <div class="field"><label>Telefono <span class="req">*</span></label><input type="tel" id="gTelefono"
-              placeholder="Es. 333 1234567"></div>
-        </div>
-        <div class="form-row full">
-          <div class="field"><label>Email <span class="req">*</span></label><input type="email" id="gEmail"
-              placeholder="Es. mario.rossi@email.it"></div>
-        </div>
-        <div class="form-row full">
-          <div class="field"><label>Secondo genitore / Contatto di emergenza</label><input type="text" id="gEmergenza"
+          <div class="field"><label>Secondo genitore / Emergenza</label><input type="text" id="gEmergenza"
               placeholder="Nome e telefono"></div>
         </div>
 
@@ -672,14 +675,6 @@
             <label class="check-label" for="c1"><strong>Consenso trattamento dati personali</strong> ai sensi del D.Lgs.
               196/2003 e del GDPR 679/2016. I dati saranno trattati esclusivamente per finalità sportive e
               amministrative da ASD Bagnolo Calcio a 5. <span class="req">*</span></label>
-          </div>
-          <!-- CONSENSO SANITARIO DINAMICO -->
-          <div class="check-row" id="sanitary-consent-row" style="display:none; margin-top: 5px; margin-bottom: 5px;">
-            <input type="checkbox" id="c_sanitario">
-            <label class="check-label" for="c_sanitario" style="color: var(--y);"><strong>Consenso esplicito trattamento
-                dati sanitari</strong> — Avendo indicato patologie/allergie, acconsento al trattamento dei miei dati
-              personali particolari relativi allo stato di salute ai sensi dell'Art. 9 GDPR per finalità organizzative e
-              di primo soccorso. <span class="req">*</span></label>
           </div>
           <div class="check-row">
             <input type="checkbox" id="c2">
@@ -879,14 +874,6 @@
     const steps = ['s0', 's1', 's2', 's3'];
 
     function showStep(n) {
-      if (n === 3) {
-        const hasMediche = document.getElementById('mediche').value.trim() !== '';
-        const sanitaryConsentRow = document.getElementById('sanitary-consent-row');
-        if (sanitaryConsentRow) {
-          sanitaryConsentRow.style.display = hasMediche ? 'flex' : 'none';
-        }
-      }
-
       steps.forEach((s, i) => {
         document.getElementById(s).classList.toggle('visible', i === n);
         const el = document.querySelector(`[data-step="${i}"]`);
@@ -912,7 +899,7 @@
 
     function validate(step) {
       if (step === 0) {
-        const fields = ['nome', 'cognome', 'dataNascita', 'sesso', 'comuneNascita', 'provinciaNascita'];
+        const fields = ['nome', 'cognome', 'dataNascita', 'sesso', 'comuneNascita', 'provinciaNascita', 'emailContatto', 'telefonoContatto'];
         let ok = true;
         fields.forEach(id => {
           const el = document.getElementById(id);
@@ -922,7 +909,7 @@
       }
       if (step === 1) {
         if (getEta() >= 18) return true; // Sicurezza aggiuntiva
-        const fields = ['gNome', 'gCognome', 'gRelazione', 'gTelefono', 'gEmail'];
+        const fields = ['gNome', 'gCognome', 'gRelazione'];
         let ok = true;
         fields.forEach(id => {
           const el = document.getElementById(id);
@@ -939,11 +926,6 @@
       if (step === 3) {
         if (!document.getElementById('c1').checked || !document.getElementById('c4').checked) {
           alert('Accetta i consensi obbligatori per procedere.');
-          return false;
-        }
-        const hasMediche = document.getElementById('mediche').value.trim() !== '';
-        if (hasMediche && !document.getElementById('c_sanitario').checked) {
-          alert('Avendo inserito patologie, allergie o note mediche, è obbligatorio accettare il Consenso Trattamento Dati Sanitari.');
           return false;
         }
         return true;
@@ -978,13 +960,14 @@
       <strong style="color:#fff">${document.getElementById('nome').value} ${document.getElementById('cognome').value}</strong><br>
       Nato il: ${document.getElementById('dataNascita').value.split('-').reverse().join('/')}<br>
       CF: <span style="font-family:monospace;color:#F5C800;letter-spacing:1px">${cf}</span><br>
+      Email: ${document.getElementById('emailContatto').value}<br>
+      Telefono: ${document.getElementById('telefonoContatto').value}<br>
       Categoria: <strong style="color:#fff">${document.getElementById('categoria').value}</strong><br>
     `;
 
       if (eta < 18) {
         html += `
-        Genitore: ${document.getElementById('gNome').value} ${document.getElementById('gCognome').value} · ${document.getElementById('gTelefono').value}<br>
-        Email: ${document.getElementById('gEmail').value}<br>
+        Genitore: ${document.getElementById('gNome').value} ${document.getElementById('gCognome').value} (${document.getElementById('gRelazione').value})<br>
       `;
       }
       document.getElementById('riepilogo').innerHTML = html;
@@ -992,19 +975,6 @@
 
     async function submitForm() {
       if (!validate(3)) return;
-
-      // 1. Honeypot check (anti-spam)
-      const honeypot = document.getElementById('iscrizione-cf-verification');
-      if (honeypot && honeypot.value.trim() !== '') {
-        console.warn('Spam rilevato tramite Honeypot.');
-        // Mostriamo un finto successo per confondere il bot
-        document.getElementById('codiceIscrizioneSuccess').textContent = 'BC5-26-' + Math.floor(1000 + Math.random() * 9000);
-        document.getElementById('s3').classList.remove('visible');
-        document.getElementById('successScreen').classList.add('visible');
-        document.getElementById('stepBar').style.display = 'none';
-        document.querySelector('.progress').style.display = 'none';
-        return;
-      }
 
       const btnSubmit = document.getElementById('btnIscrizioneSubmit');
       const btnBack = document.getElementById('btnIscrizioneBack');
@@ -1021,18 +991,26 @@
       const randomID = Math.floor(1000 + Math.random() * 9000); // 4 cifre casuali
       const codiceIscrizione = `BC5-26-${randomID}`;
 
+      // Sanitizzazione input
+      const sanitizeHTML = (str) => {
+        if (!str) return '';
+        const temp = document.createElement('div');
+        temp.textContent = str;
+        return temp.innerHTML;
+      };
+
       // 1. Dati Atleta
       const atleta = {
-        nome: document.getElementById('nome').value.trim(),
-        cognome: document.getElementById('cognome').value.trim(),
+        nome: sanitizeHTML(document.getElementById('nome').value.trim()),
+        cognome: sanitizeHTML(document.getElementById('cognome').value.trim()),
         dataNascita: document.getElementById('dataNascita').value,
         sesso: document.getElementById('sesso').value,
-        comuneNascita: document.getElementById('comuneNascita').value.trim(),
-        provinciaNascita: document.getElementById('provinciaNascita').value.trim().toUpperCase(),
-        cfCalcolato: document.getElementById('cfResult').textContent,
-        cfManuale: document.getElementById('cfManuale').value.trim().toUpperCase(),
-        comuneResidenza: document.getElementById('comuneRes').value.trim(),
-        indirizzo: document.getElementById('indirizzo').value.trim()
+        comuneNascita: sanitizeHTML(document.getElementById('comuneNascita').value.trim()),
+        provinciaNascita: sanitizeHTML(document.getElementById('provinciaNascita').value.trim().toUpperCase()),
+        cfCalcolato: sanitizeHTML(document.getElementById('cfResult').textContent),
+        cfManuale: sanitizeHTML(document.getElementById('cfManuale').value.trim().toUpperCase()),
+        comuneResidenza: sanitizeHTML(document.getElementById('comuneRes').value.trim()),
+        indirizzo: sanitizeHTML(document.getElementById('indirizzo').value.trim())
       };
 
       // 2. Dati Genitore (solo se l'atleta è minorenne)
@@ -1040,35 +1018,34 @@
       let genitore = null;
       if (eta < 18) {
         genitore = {
-          nome: document.getElementById('gNome').value.trim(),
-          cognome: document.getElementById('gCognome').value.trim(),
-          relazione: document.getElementById('gRelazione').value,
-          telefono: document.getElementById('gTelefono').value.trim(),
-          email: document.getElementById('gEmail').value.trim(),
-          contattoEmergenza: document.getElementById('gEmergenza').value.trim()
+          nome: sanitizeHTML(document.getElementById('gNome').value.trim()),
+          cognome: sanitizeHTML(document.getElementById('gCognome').value.trim()),
+          relazione: sanitizeHTML(document.getElementById('gRelazione').value),
+          contattoEmergenza: sanitizeHTML(document.getElementById('gEmergenza').value.trim())
         };
       }
 
       // Costruisce il payload finale in JSON
       const payload = {
         codiceIscrizione: codiceIscrizione,
+        emailContatto: sanitizeHTML(document.getElementById('emailContatto').value.trim()),
+        telefonoContatto: sanitizeHTML(document.getElementById('telefonoContatto').value.trim()),
         atleta: atleta,
         etaAtleta: eta,
         isMinorenne: eta < 18,
         genitore: genitore,
-        categoria: document.getElementById('categoria').value,
-        esperienza: document.getElementById('esperienza').value,
-        anniEsperienza: document.getElementById('anni').value,
-        societaPrecedente: document.getElementById('societaPrec').value.trim(),
-        ruoloPreferito: document.getElementById('ruolo').value,
-        piedeDominante: document.getElementById('piede').value,
-        patologieNoteMediche: document.getElementById('mediche').value.trim(),
+        categoria: sanitizeHTML(document.getElementById('categoria').value),
+        esperienza: sanitizeHTML(document.getElementById('esperienza').value),
+        anniEsperienza: sanitizeHTML(document.getElementById('anni').value),
+        societaPrecedente: sanitizeHTML(document.getElementById('societaPrec').value.trim()),
+        ruoloPreferito: sanitizeHTML(document.getElementById('ruolo').value),
+        piedeDominante: sanitizeHTML(document.getElementById('piede').value),
+        patologieNoteMediche: sanitizeHTML(document.getElementById('mediche').value.trim()),
         consensoPrivacy: document.getElementById('c1').checked,
-        consensoSanitario: document.getElementById('c_sanitario') ? document.getElementById('c_sanitario').checked : false,
         consensoImmagini: document.getElementById('c2').checked,
         consensoComunicazioni: document.getElementById('c3').checked,
         consensoRegolamento: document.getElementById('c4').checked,
-        noteAggiuntive: document.getElementById('note').value.trim(),
+        noteAggiuntive: sanitizeHTML(document.getElementById('note').value.trim()),
         timestamp: new Date().toISOString()
       };
 

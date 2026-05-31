@@ -4,6 +4,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy"
+    content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://hook.eu1.make.com https://docs.google.com;">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <script>
+    if (window.top !== window.self) {
+      window.top.location = window.self.location;
+    }
+  </script>
   <title>ASD Bagnolo Calcio a 5 — Emotional Futsal</title>
   <script>
     window.onerror = function (msg, url, lineNo, columnNo, error) {
@@ -143,8 +151,7 @@
           style="font-family:var(--fd);font-weight:800;font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:#fff;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--bd)">
           Info Legali</div>
         <div style="font-size:11px;color:var(--gr);line-height:1.9">P.IVA 02060590359<br>Matr. F.I.G.C.
-          630663<br>info@bagnolocalcioa5.com<br><a href="privacy-policy.html"
-            style="color:var(--y);text-decoration:underline;">Privacy & Cookie Policy</a></div>
+          630663<br>info@bagnolocalcioa5.com</div>
       </div>
     </div>
     <div
