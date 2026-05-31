@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="it">
 
 <head>
@@ -7,6 +7,8 @@
   <meta http-equiv="Content-Security-Policy"
     content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://hook.eu1.make.com https://docs.google.com https://*.google.com https://*.googleusercontent.com;">
   <meta name="referrer" content="strict-origin-when-cross-origin">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <script>
     if (window.top !== window.self) {
       window.top.location = window.self.location;
@@ -29,7 +31,7 @@
   <nav class="nav">
     <a href="index.html" class="logo">
       <img src="logo.png" alt="ASD Bagnolo C5" class="logo-img">
-      <div class="logotext">Bagnolo C5 <small>ASD · REG. EMILIA</small></div>
+      <div class="logotext">Bagnolo C5 <small>ASD &middot; REG. EMILIA</small></div>
     </a>
     <button class="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
     <div class="navlinks">
@@ -38,7 +40,7 @@
       <a href="squadre.html">Squadre</a>
       <a href="classifica.html">Classifica</a>
       <a href="storia.html">Storia</a>
-      <a href="societa.html">Società</a>
+      <a href="societa.html">Societ&agrave;</a>
       <a href="iscrizione.html" style="color:var(--y);font-weight:bold;">Iscriviti</a>
       <a href="contatti.html" class="cta">Contatti</a>
     </div>
@@ -48,27 +50,36 @@
     <div style="max-width:1060px;margin:0 auto">
       <div class="sl">Le nostre squadre</div>
       <div class="st">Il nostro <span>calcio a 5</span></div>
-      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-top:8px">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-top:24px">
 
-        <div class="card" style="padding:22px 16px;text-align:center">
-          <div
-            style="width:48px;height:48px;background:rgba(245,197,0,.12);border:1px solid var(--bdy);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-family:var(--fd);font-weight:900;font-size:12px;color:var(--y)">
-            PS</div>
+        <!-- Prima Squadra -->
+        <div class="card card-squadra" style="padding:28px 18px;text-align:center">
+          <div class="team-icon-wrap">
+            <svg viewBox="0 0 28 28" xmlns="http://www.w3.org/2000/svg">
+              <path d="M14 2 L17.5 10 L26 10.5 L20 16 L22 24.5 L14 20 L6 24.5 L8 16 L2 10.5 L10.5 10 Z" />
+            </svg>
+          </div>
           <div
             style="font-family:var(--fd);font-weight:800;font-size:15px;text-transform:uppercase;color:#fff;margin-bottom:4px">
             Prima Squadra</div>
-          <div style="font-size:11px;color:var(--y);margin-bottom:10px;font-weight:600">Serie B FIGC · Girone C</div>
+          <div style="font-size:11px;color:var(--y);margin-bottom:10px;font-weight:600">Serie B FIGC &middot; Girone C
+          </div>
           <div style="font-size:12px;color:var(--gr);line-height:1.5;margin-bottom:14px">La massima espressione del
             nostro futsal che ci rappresenta nel campionato nazionale.</div>
           <a href="classifica.html"
             style="font-family:var(--fd);font-weight:700;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--y)">Classifica
-            →</a>
+            &rarr;</a>
         </div>
 
-        <div class="card" style="padding:22px 16px;text-align:center">
-          <div
-            style="width:48px;height:48px;background:rgba(245,197,0,.12);border:1px solid var(--bdy);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-family:var(--fd);font-weight:900;font-size:12px;color:var(--y)">
-            SF</div>
+        <!-- Squadra Femminile -->
+        <div class="card card-squadra" style="padding:28px 18px;text-align:center">
+          <div class="team-icon-wrap">
+            <svg viewBox="0 0 28 28" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="14" cy="11" r="7" fill="none" stroke-width="2.5" />
+              <line x1="14" y1="18" x2="14" y2="26" stroke-width="2.5" />
+              <line x1="10" y1="22" x2="18" y2="22" stroke-width="2.5" />
+            </svg>
+          </div>
           <div
             style="font-family:var(--fd);font-weight:800;font-size:15px;text-transform:uppercase;color:#fff;margin-bottom:4px">
             Squadra Femminile</div>
@@ -77,10 +88,13 @@
             nelle competizioni del territorio.</div>
         </div>
 
-        <div class="card" style="padding:22px 16px;text-align:center">
-          <div
-            style="width:48px;height:48px;background:rgba(245,197,0,.12);border:1px solid var(--bdy);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-family:var(--fd);font-weight:900;font-size:12px;color:var(--y)">
-            U19</div>
+        <!-- Under 19 -->
+        <div class="card card-squadra" style="padding:28px 18px;text-align:center">
+          <div class="team-icon-wrap">
+            <svg viewBox="0 0 28 28" xmlns="http://www.w3.org/2000/svg">
+              <polygon points="16,2 7,16 13,16 12,26 21,12 15,12" />
+            </svg>
+          </div>
           <div
             style="font-family:var(--fd);font-weight:800;font-size:15px;text-transform:uppercase;color:#fff;margin-bottom:4px">
             Under 19</div>
@@ -89,28 +103,38 @@
             sfidandosi a livello agonistico nazionale.</div>
         </div>
 
-        <div class="card" style="padding:22px 16px;text-align:center">
-          <div
-            style="width:48px;height:48px;background:rgba(245,197,0,.12);border:1px solid var(--bdy);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-family:var(--fd);font-weight:900;font-size:12px;color:var(--y)">
-            AG</div>
+        <!-- Allievi / Giovanissimi -->
+        <div class="card card-squadra" style="padding:28px 18px;text-align:center">
+          <div class="team-icon-wrap">
+            <svg viewBox="0 0 28 28" xmlns="http://www.w3.org/2000/svg">
+              <path
+                d="M14 26 L14 12 M14 12 C14 12 7 7 4 2 C10 3 14 8 14 12Z M14 15 C14 15 21 10 24 5 C18 6 14 11 14 15Z"
+                stroke-width="1.5" stroke-linecap="round" fill="none" />
+              <path d="M14 12 C14 12 7 7 4 2 C10 3 14 8 14 12Z M14 15 C14 15 21 10 24 5 C18 6 14 11 14 15Z" />
+            </svg>
+          </div>
           <div
             style="font-family:var(--fd);font-weight:800;font-size:15px;text-transform:uppercase;color:#fff;margin-bottom:4px">
             Allievi / Giovanissimi</div>
           <div style="font-size:11px;color:var(--y);margin-bottom:10px;font-weight:600">Settore Giovanile</div>
-          <div style="font-size:12px;color:var(--gr);line-height:1.5">Il vero cuore della società, dove si formano la
-            tecnica e il carattere dei futuri atleti.</div>
+          <div style="font-size:12px;color:var(--gr);line-height:1.5">Il vero cuore della societ&agrave;, dove si
+            formano la tecnica e il carattere dei futuri atleti.</div>
         </div>
 
-        <div class="card" style="padding:22px 16px;text-align:center">
-          <div
-            style="width:48px;height:48px;background:rgba(245,197,0,.12);border:1px solid var(--bdy);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-family:var(--fd);font-weight:900;font-size:12px;color:var(--y)">
-            BB</div>
+        <!-- Baby Bagnolo -->
+        <div class="card card-squadra" style="padding:28px 18px;text-align:center">
+          <div class="team-icon-wrap">
+            <svg viewBox="0 0 28 28" xmlns="http://www.w3.org/2000/svg">
+              <path
+                d="M14 23 C14 23 3 16 3 9 C3 5.5 5.5 3 9 3 C11 3 13 4 14 5.5 C15 4 17 3 19 3 C22.5 3 25 5.5 25 9 C25 16 14 23 14 23Z" />
+            </svg>
+          </div>
           <div
             style="font-family:var(--fd);font-weight:800;font-size:15px;text-transform:uppercase;color:#fff;margin-bottom:4px">
             Baby Bagnolo</div>
           <div style="font-size:11px;color:var(--y);margin-bottom:10px;font-weight:600">Scuola Calcio a 5</div>
-          <div style="font-size:12px;color:var(--gr);line-height:1.5">I primissimi passi nel mondo del futsal per i più
-            piccoli all'insegna del puro divertimento.</div>
+          <div style="font-size:12px;color:var(--gr);line-height:1.5">I primissimi passi nel mondo del futsal per i
+            pi&ugrave; piccoli all'insegna del puro divertimento.</div>
         </div>
 
       </div>
@@ -128,7 +152,7 @@
           <div
             style="font-family:var(--fd);font-weight:800;font-size:14px;text-transform:uppercase;color:#fff;line-height:1.1">
             ASD Bagnolo Calcio a 5<div style="font-size:9px;font-weight:400;color:var(--y);letter-spacing:.2em">BAGNOLO
-              IN PIANO · RE</div>
+              IN PIANO &middot; RE</div>
           </div>
         </div>
       </div>
@@ -140,7 +164,7 @@
           <a href="news.html" style="font-size:12px;color:var(--gr)">News</a>
           <a href="squadre.html" style="font-size:12px;color:var(--gr)">Le Squadre</a>
           <a href="classifica.html" style="font-size:12px;color:var(--gr)">Classifiche</a>
-          <a href="societa.html" style="font-size:12px;color:var(--gr)">La Società</a>
+          <a href="societa.html" style="font-size:12px;color:var(--gr)">La Societ&agrave;</a>
         </div>
       </div>
       <div>
@@ -154,7 +178,7 @@
     <div
       style="border-top:1px solid var(--bd);padding-top:20px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px">
       <div style="font-size:11px;color:var(--gr)">ASD Bagnolo Calcio a 5 — Bagnolo in Piano (RE)</div>
-      <div style="font-size:11px;color:var(--gr)">© 2007–2026 ASD Bagnolo Calcio a 5</div>
+      <div style="font-size:11px;color:var(--gr)">&copy; 2007&ndash;2026 ASD Bagnolo Calcio a 5</div>
     </div>
   </footer>
 

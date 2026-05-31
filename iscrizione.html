@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="it">
 
 <head>
@@ -16,6 +16,8 @@
   <meta name="description" content="Modulo di iscrizione online per l'ASD Bagnolo Calcio a 5.">
 
   <!-- Includo il foglio di stile globale del sito per la Nav e il Footer -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="style.css">
 
   <!-- Stili specifici del modulo forniti da te -->
@@ -902,14 +904,42 @@
       window.scrollTo({ top: 0, behavior: 'smooth' }); // Scrolla in alto quando si cambia step
     }
 
+    // ---- Validatori Regex ----
+    const REGEX = {
+      nome: /^[A-Za-z\u00C0-\u017E\s'\-]{2,50}$/,
+      email: /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/,
+      telefono: /^(\+?39)?[\s\-]?3\d{2}[\s\-]?\d{6,7}$|^0\d{1,4}[\s\-]?\d{5,10}$/,
+      cf: /^[A-Z]{6}[0-9]{2}[A-Z][0-9]{2}[A-Z][0-9]{3}[A-Z]$/i,
+      provincia: /^[A-Z]{2}$/i
+    };
+
+    function validateField(el, regex, errorMsg) {
+      const val = el.value.trim();
+      if (!val) { el.classList.add('error'); el.title = 'Campo obbligatorio'; return false; }
+      if (regex && !regex.test(val)) { el.classList.add('error'); el.title = errorMsg || 'Formato non valido'; return false; }
+      el.classList.remove('error'); el.title = '';
+      return true;
+    }
+
     function validate(step) {
       if (step === 0) {
-        const fields = ['nome', 'cognome', 'dataNascita', 'sesso', 'comuneNascita', 'provinciaNascita', 'emailContatto', 'telefonoContatto'];
         let ok = true;
-        fields.forEach(id => {
+        const reqFields = ['nome', 'cognome', 'dataNascita', 'sesso', 'comuneNascita', 'provinciaNascita'];
+        reqFields.forEach(id => {
           const el = document.getElementById(id);
           if (!el.value.trim()) { el.classList.add('error'); ok = false; } else el.classList.remove('error');
         });
+        // Validazione regex specifica
+        const nomeEl = document.getElementById('nome');
+        const cognEl = document.getElementById('cognome');
+        const emailEl = document.getElementById('emailContatto');
+        const telEl = document.getElementById('telefonoContatto');
+        const provEl = document.getElementById('provinciaNascita');
+        if (!validateField(nomeEl, REGEX.nome, 'Solo lettere e spazi (2-50 caratteri)')) ok = false;
+        if (!validateField(cognEl, REGEX.nome, 'Solo lettere e spazi (2-50 caratteri)')) ok = false;
+        if (!validateField(emailEl, REGEX.email, 'Inserisci un indirizzo email valido')) ok = false;
+        if (!validateField(telEl, REGEX.telefono, 'Inserisci un numero di telefono valido (es: 348 1234567)')) ok = false;
+        if (provEl.value.trim() && !validateField(provEl, REGEX.provincia, 'Inserisci la sigla provincia (es: RE)')) ok = false;
         return ok;
       }
       if (step === 1) {

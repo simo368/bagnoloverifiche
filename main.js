@@ -12,17 +12,18 @@ const URL_CLASSIFICA = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRGt93Sn
 const URL_RISULTATI = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRGt93SnbyMxCa8iiNGD1kSFmINdNsFT7uIVYvCuuqGj8IuZ4OyDcW5fqvRSGpyuAfV-2kE7WYMLMLP/pub?gid=18686350&single=true&output=tsv";
 const URL_NEWS = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRGt93SnbyMxCa8iiNGD1kSFmINdNsFT7uIVYvCuuqGj8IuZ4OyDcW5fqvRSGpyuAfV-2kE7WYMLMLP/pub?gid=327540627&single=true&output=tsv";
 
-// Funzione di utilità per leggere e parsare il TSV con caching
+// Funzione di utilità per leggere e parsare il TSV con caching localStorage (TTL 10 min)
 async function fetchTSV(url) {
   try {
     if (!url || url.includes("INSERISCI_QUI")) return [];
 
     const cacheKey = 'tsv_cache_' + url;
-    const cachedData = sessionStorage.getItem(cacheKey);
-    const cacheTimestamp = sessionStorage.getItem(cacheKey + '_time');
+    const cacheTimestamp = 'tsv_cache_time_' + url;
+    const cachedData = localStorage.getItem(cacheKey);
+    const cacheTime = localStorage.getItem(cacheTimestamp);
 
-    // Usa cache se ha meno di 5 minuti (300000 ms)
-    if (cachedData && cacheTimestamp && (Date.now() - parseInt(cacheTimestamp) < 300000)) {
+    // Usa cache se ha meno di 10 minuti (600000 ms)
+    if (cachedData && cacheTime && (Date.now() - parseInt(cacheTime) < 600000)) {
       return JSON.parse(cachedData);
     }
 
@@ -32,8 +33,13 @@ async function fetchTSV(url) {
     lines.shift(); // Rimuove riga di intestazione
     const parsedData = lines.map(line => line.split('\t').map(cell => cell.trim()));
 
-    sessionStorage.setItem(cacheKey, JSON.stringify(parsedData));
-    sessionStorage.setItem(cacheKey + '_time', Date.now().toString());
+    try {
+      localStorage.setItem(cacheKey, JSON.stringify(parsedData));
+      localStorage.setItem(cacheTimestamp, Date.now().toString());
+    } catch (storageErr) {
+      // Quota localStorage superata — procedi senza salvare
+      console.warn('localStorage quota superata, cache non salvata.');
+    }
 
     return parsedData;
   } catch (e) {
@@ -44,12 +50,23 @@ async function fetchTSV(url) {
 
 document.addEventListener('DOMContentLoaded', () => {
 
-  /* ---- Hamburger Menu (Mobile) ---- */
+  /* ---- Hamburger Menu (Mobile) con ARIA ---- */
   const hamburger = document.querySelector('.hamburger');
   const navlinks = document.querySelector('.navlinks');
   if (hamburger && navlinks) {
+    hamburger.setAttribute('aria-expanded', 'false');
+    hamburger.setAttribute('aria-controls', 'navlinks-menu');
+    navlinks.setAttribute('id', 'navlinks-menu');
     hamburger.addEventListener('click', () => {
-      navlinks.classList.toggle('open');
+      const isOpen = navlinks.classList.toggle('open');
+      hamburger.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    });
+    // Chiudi menu cliccando fuori
+    document.addEventListener('click', (e) => {
+      if (!hamburger.contains(e.target) && !navlinks.contains(e.target)) {
+        navlinks.classList.remove('open');
+        hamburger.setAttribute('aria-expanded', 'false');
+      }
     });
   }
 
@@ -350,22 +367,36 @@ function openNewsModal(index) {
 
   let imageHtml = '';
   if (fotoUrl) {
-    imageHtml = `<img src="${fotoUrl}" alt="Immagine News" class="news-modal-image">`;
+    imageHtml = `<img src="${fotoUrl}" alt="Immagine News" class="news-modal-image" loading="lazy">`;
   }
 
-  // Costruisci la griglia delle foto extra
+  // Raccoglie tutte le foto (copertina + galleria) per il lightbox
+  const allPhotos = [];
+  if (fotoUrl) allPhotos.push(fotoUrl);
+  if (altreFotoStr.trim() !== '') {
+    altreFotoStr.split(',').map(u => u.trim()).filter(u => u !== '').forEach(u => allPhotos.push(u));
+  }
+
+  // Costruisci la griglia delle foto extra con lightbox
   let galleryHtml = '';
   if (altreFotoStr.trim() !== '') {
     const urls = altreFotoStr.split(',').map(url => url.trim()).filter(url => url !== '');
     if (urls.length > 0) {
+      // Calcola offset index (foto copertina è già in allPhotos[0] se esiste)
+      const galleryStartIdx = fotoUrl ? 1 : 0;
       galleryHtml = `<div style="margin-top:24px;border-top:1px solid var(--bd);padding-top:24px">
         <div style="font-family:var(--fd);font-weight:700;font-size:14px;text-transform:uppercase;color:var(--y);margin-bottom:12px;letter-spacing:0.1em">Galleria Foto</div>
         <div style="display:grid;grid-template-columns:repeat(auto-fill, minmax(140px, 1fr));gap:10px">
-          ${urls.map(u => `<a href="${u}" target="_blank" rel="noopener noreferrer"><img src="${u}" style="width:100%;height:140px;object-fit:cover;border-radius:4px;border:1px solid var(--bd);transition:transform 0.2s" onmouseover="this.style.transform='scale(1.03)'" onmouseout="this.style.transform='scale(1)'"></a>`).join('')}
+          ${urls.map((u, i) => `<div onclick="openLightbox(window._currentModalPhotos, ${galleryStartIdx + i})" style="cursor:zoom-in">
+            <img src="${u}" loading="lazy" style="width:100%;height:140px;object-fit:cover;border-radius:4px;border:1px solid var(--bd);transition:transform 0.2s,box-shadow 0.2s" onmouseover="this.style.transform='scale(1.04)';this.style.boxShadow='0 4px 16px rgba(0,0,0,.5)'" onmouseout="this.style.transform='scale(1)';this.style.boxShadow='none'">
+          </div>`).join('')}
         </div>
       </div>`;
     }
   }
+
+  // Salva le foto disponibili per il lightbox nella modale corrente
+  window._currentModalPhotos = allPhotos;
 
   // Crea la modale se non esiste
   let modalOverlay = document.getElementById('news-modal-overlay');
@@ -379,10 +410,15 @@ function openNewsModal(index) {
     document.body.appendChild(modalOverlay);
   }
 
+  // Foto copertina cliccabile per aprire lightbox
+  const imageClickable = (fotoUrl && allPhotos.length > 0)
+    ? imageHtml.replace('<img ', `<img onclick="openLightbox(window._currentModalPhotos, 0)" style="cursor:zoom-in" `)
+    : imageHtml;
+
   modalOverlay.innerHTML = `
     <div class="news-modal-content">
       <div class="news-modal-close" onclick="closeNewsModal()">×</div>
-      ${imageHtml}
+      ${imageClickable}
       <div class="news-modal-body">
         <div style="font-size:11px;color:var(--y);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:8px">${info}</div>
         <div style="font-family:var(--fd);font-weight:900;font-size:24px;line-height:1.1;text-transform:uppercase;color:#fff;margin-bottom:16px">${title}</div>
@@ -392,6 +428,9 @@ function openNewsModal(index) {
       </div>
     </div>
   `;
+
+  // Tasto ESC per chiudere
+  document.onkeydown = (e) => { if (e.key === 'Escape') closeNewsModal(); };
 
   // Previene lo scrolling della pagina sotto la modale
   document.body.style.overflow = 'hidden';
@@ -409,6 +448,7 @@ function closeNewsModal() {
       modalOverlay.remove();
     }, 300);
   }
+  document.onkeydown = null;
 }
 
 async function renderNews() {
@@ -485,5 +525,69 @@ async function renderNews() {
     if (window.revealObserver) {
       newsContainer.querySelectorAll('.reveal').forEach(el => window.revealObserver.observe(el));
     }
+  }
+}
+
+/* =========================================
+   LIGHTBOX NATIVO PER GALLERIA FOTO
+   ========================================= */
+
+function openLightbox(photos, startIndex) {
+  if (!photos || photos.length === 0) return;
+
+  let current = startIndex || 0;
+
+  // Rimuovi lightbox precedente se esiste
+  let lb = document.getElementById('lightbox-overlay');
+  if (lb) lb.remove();
+
+  lb = document.createElement('div');
+  lb.id = 'lightbox-overlay';
+  lb.className = 'lightbox-overlay';
+  document.body.appendChild(lb);
+
+  function render() {
+    lb.innerHTML = `
+      <div class="lightbox-close" id="lb-close">&times;</div>
+      ${photos.length > 1 ? `<div class="lightbox-nav prev" id="lb-prev">&#8592;</div>` : ''}
+      <img class="lightbox-img" src="${photos[current]}" alt="Foto ${current + 1}">
+      ${photos.length > 1 ? `<div class="lightbox-nav next" id="lb-next">&#8594;</div>` : ''}
+      ${photos.length > 1 ? `<div class="lightbox-counter">${current + 1} / ${photos.length}</div>` : ''}
+    `;
+
+    document.getElementById('lb-close').onclick = closeLightbox;
+    lb.onclick = (e) => { if (e.target === lb) closeLightbox(); };
+
+    const prev = document.getElementById('lb-prev');
+    const next = document.getElementById('lb-next');
+    if (prev) prev.onclick = (e) => { e.stopPropagation(); current = (current - 1 + photos.length) % photos.length; render(); };
+    if (next) next.onclick = (e) => { e.stopPropagation(); current = (current + 1) % photos.length; render(); };
+  }
+
+  render();
+
+  // Naviga con tastiera
+  document.onkeydown = (e) => {
+    if (e.key === 'Escape') { closeLightbox(); return; }
+    if (e.key === 'ArrowRight' && photos.length > 1) { current = (current + 1) % photos.length; render(); }
+    if (e.key === 'ArrowLeft' && photos.length > 1) { current = (current - 1 + photos.length) % photos.length; render(); }
+  };
+
+  // Mostra con animazione
+  setTimeout(() => lb.classList.add('active'), 10);
+}
+
+function closeLightbox() {
+  const lb = document.getElementById('lightbox-overlay');
+  if (lb) {
+    lb.classList.remove('active');
+    setTimeout(() => lb.remove(), 300);
+  }
+  // Ripristina ESC per la modale news se aperta
+  const newsModal = document.getElementById('news-modal-overlay');
+  if (newsModal) {
+    document.onkeydown = (e) => { if (e.key === 'Escape') closeNewsModal(); };
+  } else {
+    document.onkeydown = null;
   }
 }
