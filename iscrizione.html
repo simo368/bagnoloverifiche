@@ -487,6 +487,13 @@
     </div>
 
     <div class="form-wrap">
+      <!-- Campo Honeypot Invisibile per Anti-Spam -->
+      <div style="position: absolute; left: -5000px; top: auto; width: 1px; height: 1px; overflow: hidden;">
+        <label for="iscrizione-cf-verification">Non compilare questo campo se sei umano</label>
+        <input type="text" id="iscrizione-cf-verification" name="cf_control_verification" tabindex="-1"
+          autocomplete="off">
+      </div>
+
       <div class="step-bar" id="stepBar">
         <div class="step active" data-step="0">1. Atleta</div>
         <div class="step" data-step="1">2. Genitore</div>
@@ -666,6 +673,14 @@
               196/2003 e del GDPR 679/2016. I dati saranno trattati esclusivamente per finalità sportive e
               amministrative da ASD Bagnolo Calcio a 5. <span class="req">*</span></label>
           </div>
+          <!-- CONSENSO SANITARIO DINAMICO -->
+          <div class="check-row" id="sanitary-consent-row" style="display:none; margin-top: 5px; margin-bottom: 5px;">
+            <input type="checkbox" id="c_sanitario">
+            <label class="check-label" for="c_sanitario" style="color: var(--y);"><strong>Consenso esplicito trattamento
+                dati sanitari</strong> — Avendo indicato patologie/allergie, acconsento al trattamento dei miei dati
+              personali particolari relativi allo stato di salute ai sensi dell'Art. 9 GDPR per finalità organizzative e
+              di primo soccorso. <span class="req">*</span></label>
+          </div>
           <div class="check-row">
             <input type="checkbox" id="c2">
             <label class="check-label" for="c2"><strong>Consenso pubblicazione immagini</strong> — Autorizzo ASD Bagnolo
@@ -709,8 +724,13 @@
         <div class="success-icon"><i aria-hidden="true" style="font-style:normal">✓</i></div>
         <div class="tag">Emotional Futsal</div>
         <h2>Iscrizione inviata!</h2>
-        <p>Grazie per aver scelto il Bagnolo Calcio a 5.<br>Riceverai una conferma all'indirizzo email
-          indicato.<br><br>Per info: <span style="color:#F5C800">info@bagnolocalcioa5.com</span></p>
+        <p style="margin-bottom:12px">Grazie per aver scelto il Bagnolo Calcio a 5.<br>Riceverai una conferma
+          all'indirizzo email indicato.</p>
+        <p
+          style="background:#111;border:1px solid #2a2a2a;padding:10px;border-radius:6px;display:inline-block;margin:10px 0 20px 0;font-size:14px">
+          Codice Iscrizione: <strong style="color:#F5C800" id="codiceIscrizioneSuccess"></strong>
+        </p>
+        <p>Per info: <span style="color:#F5C800">info@bagnolocalcioa5.com</span></p>
         <div style="margin-top:2rem;padding-top:1.5rem;border-top:1px solid #1e1e1e;">
           <div style="font-size:12px;color:#555;">ASD Bagnolo Calcio a 5 · P.IVA 02060590359 · Matricola F.I.G.C. 630663
           </div>
@@ -859,6 +879,14 @@
     const steps = ['s0', 's1', 's2', 's3'];
 
     function showStep(n) {
+      if (n === 3) {
+        const hasMediche = document.getElementById('mediche').value.trim() !== '';
+        const sanitaryConsentRow = document.getElementById('sanitary-consent-row');
+        if (sanitaryConsentRow) {
+          sanitaryConsentRow.style.display = hasMediche ? 'flex' : 'none';
+        }
+      }
+
       steps.forEach((s, i) => {
         document.getElementById(s).classList.toggle('visible', i === n);
         const el = document.querySelector(`[data-step="${i}"]`);
@@ -913,6 +941,11 @@
           alert('Accetta i consensi obbligatori per procedere.');
           return false;
         }
+        const hasMediche = document.getElementById('mediche').value.trim() !== '';
+        if (hasMediche && !document.getElementById('c_sanitario').checked) {
+          alert('Avendo inserito patologie, allergie o note mediche, è obbligatorio accettare il Consenso Trattamento Dati Sanitari.');
+          return false;
+        }
         return true;
       }
       return true;
@@ -960,6 +993,19 @@
     async function submitForm() {
       if (!validate(3)) return;
 
+      // 1. Honeypot check (anti-spam)
+      const honeypot = document.getElementById('iscrizione-cf-verification');
+      if (honeypot && honeypot.value.trim() !== '') {
+        console.warn('Spam rilevato tramite Honeypot.');
+        // Mostriamo un finto successo per confondere il bot
+        document.getElementById('codiceIscrizioneSuccess').textContent = 'BC5-26-' + Math.floor(1000 + Math.random() * 9000);
+        document.getElementById('s3').classList.remove('visible');
+        document.getElementById('successScreen').classList.add('visible');
+        document.getElementById('stepBar').style.display = 'none';
+        document.querySelector('.progress').style.display = 'none';
+        return;
+      }
+
       const btnSubmit = document.getElementById('btnIscrizioneSubmit');
       const btnBack = document.getElementById('btnIscrizioneBack');
       const feedback = document.getElementById('iscrizione-feedback');
@@ -970,6 +1016,10 @@
       btnSubmit.classList.add('btn-loading');
       btnSubmit.disabled = true;
       btnBack.disabled = true;
+
+      // Genera un ID Iscrizione univoco (es: BC5-26-8392)
+      const randomID = Math.floor(1000 + Math.random() * 9000); // 4 cifre casuali
+      const codiceIscrizione = `BC5-26-${randomID}`;
 
       // 1. Dati Atleta
       const atleta = {
@@ -1001,6 +1051,7 @@
 
       // Costruisce il payload finale in JSON
       const payload = {
+        codiceIscrizione: codiceIscrizione,
         atleta: atleta,
         etaAtleta: eta,
         isMinorenne: eta < 18,
@@ -1013,6 +1064,7 @@
         piedeDominante: document.getElementById('piede').value,
         patologieNoteMediche: document.getElementById('mediche').value.trim(),
         consensoPrivacy: document.getElementById('c1').checked,
+        consensoSanitario: document.getElementById('c_sanitario') ? document.getElementById('c_sanitario').checked : false,
         consensoImmagini: document.getElementById('c2').checked,
         consensoComunicazioni: document.getElementById('c3').checked,
         consensoRegolamento: document.getElementById('c4').checked,
@@ -1031,6 +1083,7 @@
 
         if (response.ok) {
           // Successo
+          document.getElementById('codiceIscrizioneSuccess').textContent = codiceIscrizione;
           document.getElementById('s3').classList.remove('visible');
           document.getElementById('successScreen').classList.add('visible');
           document.getElementById('stepBar').style.display = 'none';

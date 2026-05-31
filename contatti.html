@@ -39,6 +39,13 @@
 
         <!-- FORM -->
         <form id="form-contatti">
+          <!-- Campo Honeypot Invisibile per Anti-Spam -->
+          <div style="position: absolute; left: -5000px; top: auto; width: 1px; height: 1px; overflow: hidden;">
+            <label for="contatti-cf-verification">Non compilare questo campo se sei umano</label>
+            <input type="text" id="contatti-cf-verification" name="cf_control_verification" tabindex="-1"
+              autocomplete="off">
+          </div>
+
           <div style="margin-bottom:14px">
             <label
               style="display:block;font-family:var(--fd);font-weight:700;font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--gr);margin-bottom:6px">Nome
@@ -165,7 +172,8 @@
           style="font-family:var(--fd);font-weight:800;font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:#fff;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--bd)">
           Info Legali</div>
         <div style="font-size:11px;color:var(--gr);line-height:1.9">P.IVA 02060590359<br>Matr. F.I.G.C.
-          630663<br>info@bagnolocalcioa5.com</div>
+          630663<br>info@bagnolocalcioa5.com<br><a href="privacy-policy.html"
+            style="color:var(--y);text-decoration:underline;">Privacy & Cookie Policy</a></div>
       </div>
     </div>
     <div

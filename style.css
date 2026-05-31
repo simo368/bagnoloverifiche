@@ -649,3 +649,32 @@ button:disabled,
     transform: translateY(0);
   }
 }
+
+/* ---- SKELETON LOADING EFFECTS ---- */
+.skeleton-row {
+  height: 18px;
+  width: 100%;
+  background: linear-gradient(90deg, #181818 25%, #222 50%, #181818 75%);
+  background-size: 200% 100%;
+  animation: loadingWave 1.5s infinite;
+  border-radius: 4px;
+}
+
+.skeleton-card {
+  height: 280px;
+  width: 100%;
+  background: linear-gradient(90deg, #181818 25%, #222 50%, #181818 75%);
+  background-size: 200% 100%;
+  animation: loadingWave 1.5s infinite;
+  border-radius: 6px;
+  border: 1px solid var(--bd);
+}
+
+@keyframes loadingWave {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
